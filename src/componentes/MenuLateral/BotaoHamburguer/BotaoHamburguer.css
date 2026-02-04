@@ -1,0 +1,30 @@
+.btn-hamburguer {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-base);
+    border-radius: var(--radius-md);
+    margin-right: var(--spacing-md);
+}
+
+.btn-hamburguer:hover {
+    background-color: var(--bg-hover);
+    transform: scale(1.05);
+}
+
+.btn-hamburguer:active {
+    transform: scale(0.95);
+}
+
+.btn-hamburguer i {
+    color: var(--primary-color);
+    transition: color var(--transition-base);
+}
+
+.btn-hamburguer:hover i {
+    color: var(--primary-dark);
+}

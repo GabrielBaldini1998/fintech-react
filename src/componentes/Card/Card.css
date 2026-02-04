@@ -1,0 +1,26 @@
+/* Cards de Resumo (Dashboard) */
+.card-custom {
+    background: var(--bg-card);
+    border: none;
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-base);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Efeito de Hover nos Cards */
+.card-custom.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg) !important;
+}
+
+.card-body {
+    padding: var(--spacing-xl);
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: var(--spacing-lg);
+    }
+}
+

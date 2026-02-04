@@ -1,0 +1,118 @@
+.card-table {
+    border-radius: var(--radius-lg);
+    border: none;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: var(--bg-hover);
+    color: var(--text-secondary);
+    height: 40px;
+    font-weight: bold;
+    font-size: var(--font-size-lg);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e5e7eb;
+    padding: var(--spacing-lg);
+}
+
+.table tbody td {
+    padding: var(--spacing-lg);
+    vertical-align: middle;
+    border-bottom: 1px solid #f3f4f6;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--bg-hover);
+    transition: background-color var(--transition-fast);
+}
+.table tfoot td {
+    background-color: var(--bg-hover);
+    padding: var(--spacing-sm);
+    text-transform: uppercase;
+}
+
+/* =========================================
+FILTRO DE TABELAS
+   ========================================= */
+.table-filter {
+    margin-bottom: var(--spacing-md);
+}
+
+.table-filter .input-group {
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #e5e7eb;
+    transition: all var(--transition-base);
+}
+
+.table-filter .input-group:focus-within,
+.table-filter .input-group.has-value {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.table-filter .input-group-text {
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    padding: var(--spacing-md);
+}
+
+.table-filter .form-control {
+    border: none;
+    padding: var(--spacing-md);
+    font-size: var(--font-size-base);
+}
+
+.table-filter .form-control:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.table-filter .btn {
+    border: none;
+    padding: var(--spacing-md);
+    color: var(--text-muted);
+    transition: all var(--transition-base);
+}
+
+.table-filter .btn:hover {
+    color: var(--primary-color);
+    background-color: var(--bg-hover);
+}
+
+.table-filter .btn:focus {
+    box-shadow: none;
+}
+
+/* Mensagem de nenhum resultado */
+.no-results-message td {
+    font-style: italic;
+    padding: var(--spacing-xl) !important;
+}
+
+/* Ícones Pequenos na Tabela */
+.icon-box-sm {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background-color: var(--bg-hover);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    transition: all var(--transition-base);
+}
+
+.icon-box-sm:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-sm);
+}

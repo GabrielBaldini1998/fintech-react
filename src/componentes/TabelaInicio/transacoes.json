@@ -1,0 +1,74 @@
+[
+    {
+        "id": 1,
+        "data": "03/12/2024",
+        "descricao": "Spotify Premium",
+        "categoria": "Assinaturas",
+        "valor": -21.90,
+        "status": "Pago"
+    },
+    {
+        "id": 2,
+        "data": "01/12/2024",
+        "descricao": "Pix Recebido - João",
+        "categoria": "Transferência",
+        "valor": 150.00,
+        "status": "Recebido"
+    },
+    {
+        "id": 3,
+        "data": "28/11/2024",
+        "descricao": "Supermercado Extra",
+        "categoria": "Alimentação",
+        "valor": -450.00,
+        "status": "Pago"
+    },
+    {
+        "id": 4,
+        "data": "27/11/2024",
+        "descricao": "Netflix",
+        "categoria": "Assinaturas",
+        "valor": -32.90,
+        "status": "Pago"
+    },
+    {
+        "id": 5,
+        "data": "25/11/2024",
+        "descricao": "Salário",
+        "categoria": "Receita",
+        "valor": 5000.00,
+        "status": "Recebido"
+    },
+    {
+        "id": 6,
+        "data": "24/11/2024",
+        "descricao": "Uber",
+        "categoria": "Transporte",
+        "valor": -28.50,
+        "status": "Pago"
+    },
+    {
+        "id": 7,
+        "data": "22/11/2024",
+        "descricao": "Padaria do Bairro",
+        "categoria": "Alimentação",
+        "valor": -85.00,
+        "status": "Pago"
+    },
+    {
+        "id": 8,
+        "data": "20/11/2024",
+        "descricao": "Pix Enviado - Maria",
+        "categoria": "Transferência",
+        "valor": -200.00,
+        "status": "Enviado"
+    },
+    {
+        "id": 9,
+        "data": "19/11/2024",
+        "descricao": "Pix Enviado - Maicon",
+        "categoria": "Transferência",
+        "valor": -1100.00,
+        "status": "Enviado"
+    }
+]

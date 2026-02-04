@@ -1,0 +1,97 @@
+/* =========================================
+1. DESIGN SYSTEM - VARIÁVEIS E CONFIGURAÇÕES
+========================================= */
+:root {
+    /* Paleta Principal - Cores Modernas */
+    --primary-color: #4361ee;       /* Azul Fintech */
+    --primary-dark: #3f37c9;         /* Azul Escuro */
+    --primary-light: #6c8eff;         /* Azul Claro */
+    --primary-gradient: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+    
+    /* Cores de Fundo */
+    --bg-light: #f5f7fa;            /* Fundo da Página - Mais suave */
+    --bg-white: #ffffff;             /* Branco puro */
+    --bg-card: #ffffff;               /* Fundo dos cards */
+    --bg-sidebar: #1a1d29;           /* Sidebar moderno */
+    --bg-hover: #f8f9fb;             /* Hover suave */
+    
+    /* Cores de Texto */
+    --text-dark: #1a1d29;            /* Texto Escuro - Mais moderno */
+    --text-secondary: #4a5568;       /* Texto Secundário */
+    --text-muted: #718096;           /* Texto Cinza */
+    --text-light: #a0aec0;           /* Texto Claro */
+    
+    /* Cores de Status */
+    --success-color: #10b981;        /* Verde Moderno */
+    --success-light: #d1fae5;         /* Verde Claro */
+    --danger-color: #ef4444;          /* Vermelho Moderno */
+    --danger-light: #fee2e2;          /* Vermelho Claro */
+    --warning-color: #f59e0b;        /* Amarelo Moderno */
+    --warning-light: #fef3c7;         /* Amarelo Claro */
+    --info-color: #3b82f6;           /* Azul Info */
+    --info-light: #dbeafe;            /* Azul Claro */
+    
+    /* Sistema de Espaçamento (8px base) */
+    --spacing-xs: 0.5rem;    /* 8px */
+    --spacing-sm: 0.75rem;   /* 12px */
+    --spacing-md: 1rem;      /* 16px */
+    --spacing-lg: 1.5rem;    /* 24px */
+    --spacing-xl: 2rem;      /* 32px */
+    --spacing-2xl: 3rem;     /* 48px */
+    --spacing-3xl: 4rem;     /* 64px */
+    
+    /* Bordas e Sombras */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Transições */
+    --transition-fast: 150ms ease-in-out;
+    --transition-base: 250ms ease-in-out;
+    --transition-slow: 350ms ease-in-out;
+    
+    /* Tipografia */
+    --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-size-xs: 0.75rem;   /* 12px */
+    --font-size-sm: 0.875rem;  /* 14px */
+    --font-size-base: 1rem;     /* 16px */
+    --font-size-lg: 1.125rem;   /* 18px */
+    --font-size-xl: 1.25rem;    /* 20px */
+    --font-size-2xl: 1.5rem;    /* 24px */
+    --font-size-3xl: 1.875rem;  /* 30px */
+    --font-size-4xl: 2.25rem;   /* 36px */
+}
+
+/* =========================================
+2. RESET E BASE
+   ========================================= */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#wrapper {
+    display: flex;
+    width: 100%;
+    overflow-x: hidden; /* O overflow-x é responsável por controlar o desbordamento horizontal do conteúdo. */
+    background-color: var(--bg-light);
+    min-height: 100vh;
+}
