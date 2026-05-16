@@ -6,9 +6,3 @@ const BASE = 'http://localhost:8080/api/contas';
 export const getContas = () => apiRequest<Conta[]>(BASE);
 
 export const createConta = (c: Conta) => apiRequest<Conta>(BASE, jsonBody('POST', c));
-
-export const updateConta = (numeroDaConta: string, c: Conta) =>
-  apiRequest<Conta>(`${BASE}/${numeroDaConta}`, jsonBody('PUT', c));
-
-export const deleteConta = (numeroDaConta: string) =>
-  apiRequest<void>(`${BASE}/${numeroDaConta}`, { method: 'DELETE' });
