@@ -1,25 +1,30 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useMenu } from '@/contexts/MenuContext';
 import { useAuth } from '@/contexts/AuthContext';
+import {
+  LayoutDashboard, CreditCard, TrendingUp, BarChart3,
+  User, LogOut, Zap,
+} from 'lucide-react';
 import './Sidebar.css';
 
 interface MenuItem {
   name: string;
-  icon: string;
+  icon: React.ReactNode;
   path: string;
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { name: 'Dashboard', icon: 'bi bi-speedometer2 me-2', path: '/dashboard' },
-  { name: 'Despesas', icon: 'bi bi-receipt me-2', path: '/despesas' },
-  { name: 'Receitas', icon: 'bi bi-cash-stack me-2', path: '/receitas' },
-  { name: 'Investimentos', icon: 'bi bi-graph-up-arrow me-2', path: '/investimentos' },
+  { name: 'Dashboard',     icon: <LayoutDashboard size={18} />, path: '/dashboard' },
+  { name: 'Despesas',      icon: <CreditCard size={18} />,      path: '/despesas' },
+  { name: 'Receitas',      icon: <TrendingUp size={18} />,      path: '/receitas' },
+  { name: 'Investimentos', icon: <BarChart3 size={18} />,       path: '/investimentos' },
+  { name: 'Perfil',        icon: <User size={18} />,            path: '/perfil' },
 ];
 
 const Sidebar = () => {
   const { pathname } = useLocation();
   const { closeMenu } = useMenu();
-  const { logout } = useAuth();
+  const { session, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -28,36 +33,68 @@ const Sidebar = () => {
     navigate('/login');
   };
 
+  const initials = session?.usuario.nmCompleto
+    .split(' ')
+    .slice(0, 2)
+    .map(n => n[0])
+    .join('')
+    .toUpperCase() ?? '';
+
   return (
-    <div className="text-white" id="sidebar-wrapper">
-      <div className="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom">
-        <h1>Fintech</h1>
+    <div id="sidebar-wrapper">
+      {/* Logo */}
+      <div className="sidebar-logo">
+        <div className="sidebar-logo-icon"><Zap size={18} /></div>
+        <div>
+          <span className="sidebar-logo-text">FINTECH</span>
+          <span className="sidebar-logo-sub">Banco Digital</span>
+        </div>
       </div>
-      <div className="list-group list-group-flush my-3">
-        {MENU_ITEMS.map((item) => {
+
+      {/* Nav */}
+      <nav className="sidebar-nav">
+        <span className="sidebar-section-label">Menu</span>
+        {MENU_ITEMS.map(item => {
           const isActive = pathname === item.path;
           return (
             <Link
               key={item.path}
               to={item.path}
               onClick={closeMenu}
-              className={[
-                'list-group-item list-group-item-action bg-transparent second-text fw-bold',
-                isActive ? 'active' : '',
-              ].join(' ')}
+              className={`sidebar-item${isActive ? ' active' : ''}`}
             >
-              <i className={item.icon} /> {item.name}
+              <span className="sidebar-icon">{item.icon}</span>
+              {item.name}
             </Link>
           );
         })}
+      </nav>
 
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="list-group-item list-group-item-action bg-transparent text-danger fw-bold mt-5 border-0 text-start"
-          style={{ cursor: 'pointer' }}
-        >
-          <i className="bi bi-box-arrow-left me-2" /> Sair
+      {/* Footer com avatar + logout */}
+      <div className="sidebar-footer">
+        {session && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.75rem', padding: '0.5rem 0.25rem' }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: '50%',
+              background: 'var(--ft-gradient-primary)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '0.7rem', fontWeight: 700, color: '#fff', flexShrink: 0,
+            }}>
+              {initials}
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--ft-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {session.usuario.nmCompleto.split(' ')[0]}
+              </div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--ft-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {session.conta.tipo}
+              </div>
+            </div>
+          </div>
+        )}
+        <button onClick={handleLogout} className="sidebar-item danger">
+          <span className="sidebar-icon"><LogOut size={18} /></span>
+          Sair
         </button>
       </div>
     </div>

@@ -1,30 +1,16 @@
 .btn-hamburguer {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: var(--spacing-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition-base);
-    border-radius: var(--radius-md);
-    margin-right: var(--spacing-md);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--ft-border);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--ft-transition);
+  border-radius: var(--ft-radius-sm);
 }
-
 .btn-hamburguer:hover {
-    background-color: var(--bg-hover);
-    transform: scale(1.05);
+  background-color: rgba(255,255,255,0.09);
 }
-
-.btn-hamburguer:active {
-    transform: scale(0.95);
-}
-
-.btn-hamburguer i {
-    color: var(--primary-color);
-    transition: color var(--transition-base);
-}
-
-.btn-hamburguer:hover i {
-    color: var(--primary-dark);
-}
+.btn-hamburguer i { color: var(--ft-text-muted); }
+.btn-hamburguer:hover i { color: var(--ft-text); }

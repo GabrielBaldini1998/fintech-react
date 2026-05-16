@@ -1,97 +1,351 @@
-/* =========================================
-1. DESIGN SYSTEM - VARIÁVEIS E CONFIGURAÇÕES
-========================================= */
+/* =====================================================
+   FINTECH — DESIGN SYSTEM (DARK + LIGHT)
+   ===================================================== */
+
+/* Google Fonts fallback já no HTML, mas garantimos aqui */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 :root {
-    /* Paleta Principal - Cores Modernas */
-    --primary-color: #4361ee;       /* Azul Fintech */
-    --primary-dark: #3f37c9;         /* Azul Escuro */
-    --primary-light: #6c8eff;         /* Azul Claro */
-    --primary-gradient: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
-    
-    /* Cores de Fundo */
-    --bg-light: #f5f7fa;            /* Fundo da Página - Mais suave */
-    --bg-white: #ffffff;             /* Branco puro */
-    --bg-card: #ffffff;               /* Fundo dos cards */
-    --bg-sidebar: #1a1d29;           /* Sidebar moderno */
-    --bg-hover: #f8f9fb;             /* Hover suave */
-    
-    /* Cores de Texto */
-    --text-dark: #1a1d29;            /* Texto Escuro - Mais moderno */
-    --text-secondary: #4a5568;       /* Texto Secundário */
-    --text-muted: #718096;           /* Texto Cinza */
-    --text-light: #a0aec0;           /* Texto Claro */
-    
-    /* Cores de Status */
-    --success-color: #10b981;        /* Verde Moderno */
-    --success-light: #d1fae5;         /* Verde Claro */
-    --danger-color: #ef4444;          /* Vermelho Moderno */
-    --danger-light: #fee2e2;          /* Vermelho Claro */
-    --warning-color: #f59e0b;        /* Amarelo Moderno */
-    --warning-light: #fef3c7;         /* Amarelo Claro */
-    --info-color: #3b82f6;           /* Azul Info */
-    --info-light: #dbeafe;            /* Azul Claro */
-    
-    /* Sistema de Espaçamento (8px base) */
-    --spacing-xs: 0.5rem;    /* 8px */
-    --spacing-sm: 0.75rem;   /* 12px */
-    --spacing-md: 1rem;      /* 16px */
-    --spacing-lg: 1.5rem;    /* 24px */
-    --spacing-xl: 2rem;      /* 32px */
-    --spacing-2xl: 3rem;     /* 48px */
-    --spacing-3xl: 4rem;     /* 64px */
-    
-    /* Bordas e Sombras */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
-    --radius-full: 9999px;
-    
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    
-    /* Transições */
-    --transition-fast: 150ms ease-in-out;
-    --transition-base: 250ms ease-in-out;
-    --transition-slow: 350ms ease-in-out;
-    
-    /* Tipografia */
-    --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-size-xs: 0.75rem;   /* 12px */
-    --font-size-sm: 0.875rem;  /* 14px */
-    --font-size-base: 1rem;     /* 16px */
-    --font-size-lg: 1.125rem;   /* 18px */
-    --font-size-xl: 1.25rem;    /* 20px */
-    --font-size-2xl: 1.5rem;    /* 24px */
-    --font-size-3xl: 1.875rem;  /* 30px */
-    --font-size-4xl: 2.25rem;   /* 36px */
+  /* ── Paleta Principal ── */
+  --ft-bg-page:        #0F0F13;
+  --ft-bg-card:        #1A1A2E;
+  --ft-bg-card-alt:    #16213E;
+  --ft-bg-input:       #0F0F1A;
+  --ft-border:         rgba(255, 255, 255, 0.06);
+  --ft-border-hover:   rgba(255, 255, 255, 0.12);
+
+  /* ── Cores de Destaque ── */
+  --ft-purple:         #7C3AED;
+  --ft-purple-light:   #8B5CF6;
+  --ft-purple-dim:     rgba(124, 58, 237, 0.15);
+  --ft-green:          #10B981;
+  --ft-green-dim:      rgba(16, 185, 129, 0.15);
+  --ft-red:            #EF4444;
+  --ft-red-dim:        rgba(239, 68, 68, 0.15);
+  --ft-blue:           #3B82F6;
+  --ft-blue-dim:       rgba(59, 130, 246, 0.15);
+  --ft-yellow:         #F59E0B;
+  --ft-yellow-dim:     rgba(245, 158, 11, 0.15);
+
+  /* ── Gradientes ── */
+  --ft-gradient-primary:    linear-gradient(135deg, #7C3AED 0%, #3B82F6 100%);
+  --ft-gradient-green:      linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --ft-gradient-red:        linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  --ft-gradient-blue:       linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+
+  /* ── Texto ── */
+  --ft-text:           #E2E8F0;
+  --ft-text-secondary: #CBD5E1;
+  --ft-text-muted:     #64748B;
+  --ft-text-dim:       #475569;
+
+  /* ── Sombras ── */
+  --ft-shadow-sm:   0 1px 3px rgba(0,0,0,0.4);
+  --ft-shadow-md:   0 4px 16px rgba(0,0,0,0.35);
+  --ft-shadow-lg:   0 8px 32px rgba(0,0,0,0.4);
+  --ft-shadow-glow: 0 0 20px rgba(124,58,237,0.25);
+
+  /* ── Raios de Borda ── */
+  --ft-radius-sm:   8px;
+  --ft-radius-md:   12px;
+  --ft-radius-lg:   16px;
+  --ft-radius-xl:   20px;
+  --ft-radius-full: 9999px;
+
+  /* ── Transições ── */
+  --ft-transition: 200ms ease;
+
+  /* ── Sidebar ── */
+  --ft-sidebar-width: 260px;
 }
 
-/* =========================================
-2. RESET E BASE
-   ========================================= */
-* {
-    box-sizing: border-box;
+/* ── Override Bootstrap dark-theme vars ── */
+[data-bs-theme="dark"] {
+  --bs-body-bg:        var(--ft-bg-page);
+  --bs-body-color:     var(--ft-text);
+  --bs-card-bg:        var(--ft-bg-card);
+  --bs-card-border-color: var(--ft-border);
+  --bs-border-color:   var(--ft-border);
+  --bs-secondary-bg:   var(--ft-bg-card-alt);
+  --bs-tertiary-bg:    #12121A;
+  --bs-form-control-bg: var(--ft-bg-input);
+  --bs-input-bg:       var(--ft-bg-input);
+  --bs-input-border-color: rgba(255,255,255,0.1);
+  --bs-input-focus-border-color: var(--ft-purple);
+  --bs-table-bg:       transparent;
+  --bs-table-hover-bg: rgba(255,255,255,0.04);
+  --bs-table-striped-bg: rgba(255,255,255,0.02);
+  --bs-primary:        var(--ft-purple);
+  --bs-primary-rgb:    124, 58, 237;
 }
+
+/* =====================================================
+   TEMA LIGHT — sobrescreve variáveis --ft-*
+   ===================================================== */
+[data-theme="light"] {
+  --ft-bg-page:        #F0F2F5;
+  --ft-bg-card:        #FFFFFF;
+  --ft-bg-card-alt:    #F8FAFC;
+  --ft-bg-input:       #FFFFFF;
+  --ft-border:         rgba(0, 0, 0, 0.08);
+  --ft-border-hover:   rgba(0, 0, 0, 0.15);
+
+  --ft-text:           #1E293B;
+  --ft-text-secondary: #334155;
+  --ft-text-muted:     #64748B;
+  --ft-text-dim:       #94A3B8;
+
+  --ft-shadow-sm:   0 1px 3px rgba(0,0,0,0.08);
+  --ft-shadow-md:   0 4px 16px rgba(0,0,0,0.10);
+  --ft-shadow-lg:   0 8px 32px rgba(0,0,0,0.12);
+  --ft-shadow-glow: 0 0 20px rgba(124,58,237,0.18);
+
+  /* As cores de destaque (roxo/verde/vermelho/azul) permanecem iguais */
+  --ft-purple-dim:  rgba(124, 58, 237, 0.10);
+  --ft-green-dim:   rgba(16, 185, 129, 0.10);
+  --ft-red-dim:     rgba(239, 68, 68, 0.10);
+  --ft-blue-dim:    rgba(59, 130, 246, 0.10);
+  --ft-yellow-dim:  rgba(245, 158, 11, 0.10);
+}
+
+/* Bootstrap light — sobrescreve vars do Bootstrap */
+[data-theme="light"][data-bs-theme="light"] {
+  --bs-body-bg:        var(--ft-bg-page);
+  --bs-body-color:     var(--ft-text);
+  --bs-card-bg:        var(--ft-bg-card);
+  --bs-card-border-color: var(--ft-border);
+  --bs-border-color:   var(--ft-border);
+  --bs-secondary-bg:   var(--ft-bg-card-alt);
+  --bs-tertiary-bg:    #EEF0F4;
+  --bs-form-control-bg: var(--ft-bg-input);
+  --bs-input-bg:       var(--ft-bg-input);
+  --bs-input-border-color: rgba(0,0,0,0.15);
+  --bs-input-focus-border-color: var(--ft-purple);
+  --bs-table-bg:       transparent;
+  --bs-table-hover-bg: rgba(0,0,0,0.03);
+  --bs-primary:        var(--ft-purple);
+  --bs-primary-rgb:    124, 58, 237;
+}
+
+/* =====================================================
+   BASE
+   ===================================================== */
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
-    font-family: var(--font-family);
-    background-color: var(--bg-light);
-    color: var(--text-dark);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--ft-bg-page);
+  color: var(--ft-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
+#root { display: flex; flex-direction: column; min-height: 100vh; }
+
 #wrapper {
-    display: flex;
-    width: 100%;
-    overflow-x: hidden; /* O overflow-x é responsável por controlar o desbordamento horizontal do conteúdo. */
-    background-color: var(--bg-light);
-    min-height: 100vh;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--ft-bg-page);
+  overflow-x: hidden;
+}
+
+#page-content-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left var(--ft-transition);
+}
+
+/* =====================================================
+   SCROLLBAR CUSTOMIZADA
+   ===================================================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--ft-bg-page); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* =====================================================
+   BOOTSTRAP OVERRIDES — BOTÕES
+   ===================================================== */
+.btn-primary {
+  background: var(--ft-gradient-primary) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 600;
+  box-shadow: 0 0 16px rgba(124,58,237,0.35);
+  transition: all var(--ft-transition);
+}
+.btn-primary:hover { opacity: 0.9; box-shadow: 0 0 24px rgba(124,58,237,0.5); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.55; }
+
+.btn-outline-secondary {
+  border-color: var(--ft-border-hover) !important;
+  color: var(--ft-text-secondary) !important;
+}
+.btn-outline-secondary:hover {
+  background-color: rgba(255,255,255,0.06) !important;
+  color: var(--ft-text) !important;
+}
+
+.btn-outline-primary {
+  border-color: var(--ft-purple) !important;
+  color: var(--ft-purple) !important;
+}
+.btn-outline-primary:hover {
+  background-color: var(--ft-purple-dim) !important;
+  color: var(--ft-purple-light) !important;
+}
+
+.btn-outline-danger {
+  border-color: var(--ft-red) !important;
+  color: var(--ft-red) !important;
+}
+.btn-outline-danger:hover {
+  background-color: var(--ft-red-dim) !important;
+  color: #FCA5A5 !important;
+}
+
+/* =====================================================
+   BOOTSTRAP OVERRIDES — CARDS
+   ===================================================== */
+.card {
+  background: var(--ft-bg-card) !important;
+  border: 1px solid var(--ft-border) !important;
+  border-radius: var(--ft-radius-lg) !important;
+  color: var(--ft-text) !important;
+}
+.card-body { color: var(--ft-text); }
+
+/* =====================================================
+   BOOTSTRAP OVERRIDES — FORMULÁRIOS
+   ===================================================== */
+.form-control,
+.form-select {
+  background-color: var(--ft-bg-input) !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: var(--ft-text) !important;
+  border-radius: var(--ft-radius-sm) !important;
+  transition: border-color var(--ft-transition), box-shadow var(--ft-transition);
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--ft-purple) !important;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.2) !important;
+  background-color: var(--ft-bg-input) !important;
+  color: var(--ft-text) !important;
+}
+.form-control::placeholder { color: var(--ft-text-muted) !important; }
+.form-label { color: var(--ft-text-secondary); font-size: 0.8125rem; font-weight: 500; }
+
+/* =====================================================
+   BOOTSTRAP OVERRIDES — TABELAS
+   ===================================================== */
+.table {
+  color: var(--ft-text) !important;
+  border-color: var(--ft-border) !important;
+}
+.table thead th {
+  background: rgba(255,255,255,0.03) !important;
+  color: var(--ft-text-muted) !important;
+  border-color: var(--ft-border) !important;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.table tbody td {
+  border-color: var(--ft-border) !important;
+  color: var(--ft-text) !important;
+  vertical-align: middle;
+}
+.table-hover tbody tr:hover td {
+  background: rgba(255,255,255,0.04) !important;
+}
+.table-light { --bs-table-bg: rgba(255,255,255,0.03) !important; }
+
+/* =====================================================
+   BOOTSTRAP OVERRIDES — ALERTS / BADGES
+   ===================================================== */
+.alert-danger {
+  background: var(--ft-red-dim) !important;
+  border-color: rgba(239,68,68,0.3) !important;
+  color: #FCA5A5 !important;
+}
+.badge.bg-danger  { background: var(--ft-red) !important; }
+.badge.bg-success { background: var(--ft-green) !important; }
+.badge.bg-primary { background: var(--ft-purple) !important; }
+.badge.bg-warning { background: var(--ft-yellow) !important; color: #000 !important; }
+
+/* =====================================================
+   BOOTSTRAP OVERRIDES — NAV TABS
+   ===================================================== */
+.nav-tabs {
+  border-bottom-color: var(--ft-border) !important;
+}
+.nav-tabs .nav-link {
+  color: var(--ft-text-muted) !important;
+  border-color: transparent !important;
+}
+.nav-tabs .nav-link.active {
+  background: var(--ft-bg-card) !important;
+  border-color: var(--ft-border) var(--ft-border) var(--ft-bg-card) !important;
+  color: var(--ft-text) !important;
+}
+.nav-tabs .nav-link:hover:not(.active) {
+  border-color: transparent !important;
+  color: var(--ft-text) !important;
+}
+
+/* =====================================================
+   BOOTSTRAP OVERRIDES — SPINNER
+   ===================================================== */
+.spinner-border { border-color: var(--ft-purple); border-right-color: transparent; }
+.spinner-border-sm { width: 1rem; height: 1rem; }
+
+/* =====================================================
+   TEXTOS UTILITÁRIOS
+   ===================================================== */
+.text-muted { color: var(--ft-text-muted) !important; }
+.text-success { color: var(--ft-green) !important; }
+.text-danger  { color: var(--ft-red) !important; }
+.text-primary { color: var(--ft-purple) !important; }
+.text-warning { color: var(--ft-yellow) !important; }
+.text-info    { color: var(--ft-blue) !important; }
+
+/* =====================================================
+   LIGHT THEME — CORREÇÕES ESPECÍFICAS
+   ===================================================== */
+
+/* Inputs: borda escura no light mode */
+[data-theme="light"] .form-control,
+[data-theme="light"] .form-select {
+  border-color: rgba(0,0,0,0.15) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* Tabela: header com tom cinza claro */
+[data-theme="light"] .table thead th {
+  background: rgba(0,0,0,0.03) !important;
+}
+[data-theme="light"] .table-hover tbody tr:hover td {
+  background: rgba(0,0,0,0.025) !important;
+}
+
+/* Scrollbar mais discreta no light */
+[data-theme="light"] ::-webkit-scrollbar-track { background: var(--ft-bg-page); }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+
+/* Transição suave ao trocar tema */
+body {
+  transition: background-color 250ms ease, color 250ms ease;
+}
+.card, #sidebar-wrapper, footer {
+  transition: background 250ms ease, border-color 250ms ease, color 250ms ease;
 }

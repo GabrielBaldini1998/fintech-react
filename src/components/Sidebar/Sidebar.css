@@ -1,114 +1,192 @@
-/* =========================================
-3. LAYOUT RESPONSIVO (SIDEBAR FIXA)
-   ========================================= */
+/* =====================================================
+   SIDEBAR — DARK FINTECH
+   ===================================================== */
 
-
-/* Sidebar (Menu Lateral) - Design Moderno */
 #sidebar-wrapper {
-    background: var(--bg-sidebar) !important;
-    min-height: 100vh;
-    width: 260px;
-    margin-left: -260px;
-    transition: margin var(--transition-base);
-    flex-shrink: 0;
-    color: white !important;
-    box-shadow: var(--shadow-lg);
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: 0;
+  background: #13131F !important;
+  border-right: 1px solid var(--ft-border);
+  min-height: 100vh;
+  width: var(--ft-sidebar-width);
+  margin-left: calc(-1 * var(--ft-sidebar-width));
+  transition: margin var(--ft-transition);
+  flex-shrink: 0;
+  position: fixed;
+  z-index: 1040;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.4);
 }
 
-/* Sidebar - Estilos de Texto e Itens */
-#sidebar-wrapper,
-#sidebar-wrapper .sidebar-heading,
-#sidebar-wrapper .list-group-item:not(.text-danger),
-#sidebar-wrapper .list-group-item:not(.text-danger) i {
-    color: rgba(255, 255, 255, 0.9) !important;
+/* ── Logo ── */
+.sidebar-logo {
+  padding: 1.5rem 1.25rem 1.25rem;
+  border-bottom: 1px solid var(--ft-border);
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
 }
 
-#sidebar-wrapper .list-group-item {
-    border: none !important;
-    padding: var(--spacing-md) var(--spacing-lg);
-    margin: var(--spacing-xs) var(--spacing-md);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-base);
-    font-weight: 500;
-    font-size: var(--font-size-base);
+.sidebar-logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--ft-gradient-primary);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #fff;
+  box-shadow: var(--ft-shadow-glow);
+  flex-shrink: 0;
 }
 
-/* Item ativo no sidebar - Design Moderno */
-#sidebar-wrapper .list-group-item.active {
-    background: var(--primary-gradient) !important;
-    color: white !important;
-    box-shadow: var(--shadow-md);
-    transform: translateX(4px);
+.sidebar-logo-text {
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background: var(--ft-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
 }
 
-#sidebar-wrapper .list-group-item.active i {
-    color: white !important;
+.sidebar-logo-sub {
+  font-size: 0.65rem;
+  color: var(--ft-text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 1px;
 }
 
-/* Hover nos itens da lista */
-#sidebar-wrapper .list-group-item:hover:not(.text-danger):not(.active) {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-    color: white !important;
-    transform: translateX(4px);
+/* ── Nav ── */
+.sidebar-nav {
+  flex: 1;
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-#sidebar-wrapper .list-group-item:hover:not(.text-danger):not(.active) i {
-    color: white !important;
+.sidebar-section-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ft-text-dim);
+  padding: 0.75rem 0.75rem 0.25rem;
 }
 
-/* Hover no botão Sair */
-#sidebar-wrapper .list-group-item.text-danger:hover {
-    background-color: rgba(239, 68, 68, 0.15) !important;
-    color: #fca5a5 !important;
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--ft-radius-md);
+  color: var(--ft-text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all var(--ft-transition);
+  position: relative;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
 }
 
-#sidebar-wrapper .list-group-item.text-danger:hover i {
-    color: #fca5a5 !important;
+.sidebar-item:hover:not(.active):not(.danger) {
+  background: rgba(255,255,255,0.05);
+  color: var(--ft-text);
 }
 
-/* Cabeçalho do Sidebar */
-#sidebar-wrapper .sidebar-heading {
-    padding: var(--spacing-xl) var(--spacing-lg);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: var(--spacing-md);
+.sidebar-item.active {
+  background: var(--ft-purple-dim);
+  color: var(--ft-purple-light);
+  font-weight: 600;
 }
 
-#sidebar-wrapper .border-bottom {
-    border: none !important;
+.sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: var(--ft-gradient-primary);
+  border-radius: 0 var(--ft-radius-sm) var(--ft-radius-sm) 0;
 }
 
-/* Conteúdo Principal */
-#page-content-wrapper {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+.sidebar-item.danger {
+  color: var(--ft-red);
+}
+.sidebar-item.danger:hover {
+  background: var(--ft-red-dim);
+  color: #FCA5A5;
 }
 
-/* Classe ativada pelo JS para mostrar/esconder o menu */
-body.toggled #sidebar-wrapper {
-    margin-left: 0;
+.sidebar-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
+.sidebar-item.active .sidebar-icon { color: var(--ft-purple-light); }
 
-/* REGRAS PARA COMPUTADOR (Telas maiores que 768px) */
+/* ── Footer da sidebar ── */
+.sidebar-footer {
+  padding: 1rem 0.75rem;
+  border-top: 1px solid var(--ft-border);
+}
+
+/* ── Toggle no desktop ── */
+body.toggled #sidebar-wrapper { margin-left: calc(-1 * var(--ft-sidebar-width)); }
+
 @media (min-width: 768px) {
-    #sidebar-wrapper {
-        margin-left: 0; /* Menu sempre visível no PC */
-        position: relative; /* Em desktop, volta a ser relative */
-    }
+  #sidebar-wrapper { margin-left: 0; position: relative; }
+  body.toggled #sidebar-wrapper { margin-left: calc(-1 * var(--ft-sidebar-width)); }
+}
 
-    #page-content-wrapper {
-        min-width: 0;
-        width: 100%;
-    }
+/* ── LIGHT THEME ── */
+[data-theme="light"] #sidebar-wrapper {
+  background: #FFFFFF !important;
+  border-right-color: rgba(0,0,0,0.08);
+  box-shadow: 2px 0 16px rgba(0,0,0,0.08);
+}
 
-    /* Se clicar no botão no PC, ele esconde o menu */
-    body.toggled #sidebar-wrapper {
-        margin-left: -260px;
-    }
+[data-theme="light"] .sidebar-item {
+  color: #64748B;
+}
+
+[data-theme="light"] .sidebar-item:hover:not(.active):not(.danger) {
+  background: rgba(124, 58, 237, 0.06);
+  color: var(--ft-purple);
+}
+
+[data-theme="light"] .sidebar-item.active {
+  color: var(--ft-purple);
+}
+
+[data-theme="light"] .sidebar-item.active .sidebar-icon {
+  color: var(--ft-purple);
+}
+
+[data-theme="light"] .sidebar-section-label {
+  color: #94A3B8;
+}
+
+[data-theme="light"] .sidebar-logo-sub {
+  color: #94A3B8;
+}
+
+[data-theme="light"] .sidebar-item.danger:hover {
+  color: var(--ft-red);
 }

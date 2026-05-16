@@ -1,21 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Zap, Eye, EyeOff } from 'lucide-react';
 import { useAuth, type RegisterData } from '@/contexts/AuthContext';
 
 type Tab = 'login' | 'cadastro';
-
-type RegForm = Omit<RegisterData, 'saldo'> & { saldoStr: string };
+type RegForm = RegisterData;
 
 const emptyReg: RegForm = {
-  nmCompleto: '',
-  dtNascimento: '',
-  nmCpfUsuario: '',
-  dsEmail: '',
-  dsSenha: '',
-  numeroDaConta: '',
-  agencia: '',
+  nmCompleto: '', dtNascimento: '', nmCpfUsuario: '',
+  dsEmail: '', dsSenha: '', numeroDaConta: '', agencia: '',
   tipo: 'Corrente',
-  saldoStr: '',
 };
 
 const LoginPage = () => {
@@ -23,9 +17,9 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>('login');
 
-  // --- Login ---
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [showSenha, setShowSenha] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
 
@@ -43,14 +37,11 @@ const LoginPage = () => {
     }
   };
 
-  // --- Cadastro ---
   const [reg, setReg] = useState<RegForm>(emptyReg);
   const [regError, setRegError] = useState<string | null>(null);
   const [regLoading, setRegLoading] = useState(false);
 
-  const handleRegChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleRegChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setReg(prev => ({ ...prev, [name]: value }));
   };
@@ -60,8 +51,7 @@ const LoginPage = () => {
     setRegError(null);
     setRegLoading(true);
     try {
-      const { saldoStr, ...rest } = reg;
-      await register({ ...rest, saldo: parseFloat(saldoStr) || 0 });
+      await register(reg);
       navigate('/dashboard');
     } catch (err) {
       setRegError(err instanceof Error ? err.message : 'Erro ao criar conta.');
@@ -71,99 +61,103 @@ const LoginPage = () => {
   };
 
   return (
-    <div
-      className="min-vh-100 d-flex align-items-center justify-content-center py-4"
-      style={{ background: 'var(--bg-light)' }}
-    >
-      <div
-        className="card border-0 shadow-lg w-100"
-        style={{ maxWidth: 540 }}
-      >
+    <div style={{
+      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'var(--ft-bg-page)', padding: '1.5rem',
+    }}>
+      <div style={{
+        position: 'fixed', top: '20%', left: '10%', width: 400, height: 400,
+        background: 'radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)',
+        borderRadius: '50%', pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'fixed', bottom: '10%', right: '15%', width: 300, height: 300,
+        background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)',
+        borderRadius: '50%', pointerEvents: 'none',
+      }} />
+
+      <div style={{
+        width: '100%', maxWidth: 520, position: 'relative', zIndex: 1,
+        background: 'var(--ft-bg-card)', border: '1px solid var(--ft-border)',
+        borderRadius: 'var(--ft-radius-xl)', overflow: 'hidden',
+        boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
+      }}>
         {/* Header */}
-        <div
-          className="text-center py-4 px-4"
-          style={{
-            background: 'var(--primary-gradient)',
-            borderRadius: '0.5rem 0.5rem 0 0',
-          }}
-        >
-          <h1
-            className="text-white fw-bold mb-0"
-            style={{ fontSize: '1.75rem', letterSpacing: 2 }}
-          >
+        <div style={{
+          background: 'linear-gradient(135deg, #3B1F8C 0%, #1a2b6b 100%)',
+          padding: '2rem', textAlign: 'center',
+          borderBottom: '1px solid rgba(124,58,237,0.3)',
+        }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            width: 52, height: 52, background: 'rgba(255,255,255,0.1)',
+            borderRadius: 'var(--ft-radius-md)', marginBottom: '0.875rem',
+          }}>
+            <Zap size={24} color="#fff" />
+          </div>
+          <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#fff', letterSpacing: '0.05em' }}>
             FINTECH
           </h1>
-          <p className="text-white-50 small mb-0">Seu banco digital</p>
+          <p style={{ margin: '4px 0 0', color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem' }}>
+            Seu banco digital
+          </p>
         </div>
 
         {/* Tabs */}
-        <ul className="nav nav-tabs border-0 px-4 pt-3">
-          <li className="nav-item">
+        <div style={{ display: 'flex', borderBottom: '1px solid var(--ft-border)' }}>
+          {(['login', 'cadastro'] as Tab[]).map(t => (
             <button
-              type="button"
-              className={`nav-link fw-semibold${tab === 'login' ? ' active' : ''}`}
-              onClick={() => setTab('login')}
+              key={t}
+              onClick={() => setTab(t)}
+              style={{
+                flex: 1, padding: '0.875rem', border: 'none', cursor: 'pointer',
+                background: tab === t ? 'rgba(124,58,237,0.1)' : 'transparent',
+                color: tab === t ? 'var(--ft-purple-light)' : 'var(--ft-text-muted)',
+                fontWeight: tab === t ? 700 : 500, fontSize: '0.875rem',
+                borderBottom: tab === t ? '2px solid var(--ft-purple)' : '2px solid transparent',
+                transition: 'all var(--ft-transition)',
+              }}
             >
-              Entrar
+              {t === 'login' ? 'Entrar' : 'Criar conta'}
             </button>
-          </li>
-          <li className="nav-item">
-            <button
-              type="button"
-              className={`nav-link fw-semibold${tab === 'cadastro' ? ' active' : ''}`}
-              onClick={() => setTab('cadastro')}
-            >
-              Cadastrar nova conta
-            </button>
-          </li>
-        </ul>
+          ))}
+        </div>
 
-        <div className="px-4 py-4">
+        <div style={{ padding: '1.75rem' }}>
           {/* ── Login ── */}
           {tab === 'login' && (
             <form onSubmit={handleLogin}>
-              <div className="mb-3">
-                <label className="form-label fw-semibold small">E-mail</label>
-                <input
-                  className="form-control"
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  autoComplete="email"
-                  required
-                />
+              <div style={{ marginBottom: '1rem' }}>
+                <label className="form-label">E-mail</label>
+                <input className="form-control" type="email" value={email}
+                  onChange={e => setEmail(e.target.value)} placeholder="seu@email.com"
+                  autoComplete="email" required />
               </div>
-              <div className="mb-3">
-                <label className="form-label fw-semibold small">Senha</label>
-                <input
-                  className="form-control"
-                  type="password"
-                  value={senha}
-                  onChange={e => setSenha(e.target.value)}
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  required
-                />
+              <div style={{ marginBottom: '1rem' }}>
+                <label className="form-label">Senha</label>
+                <div style={{ position: 'relative' }}>
+                  <input className="form-control" type={showSenha ? 'text' : 'password'}
+                    value={senha} onChange={e => setSenha(e.target.value)}
+                    placeholder="••••••••" autoComplete="current-password" required
+                    style={{ paddingRight: '2.75rem' }} />
+                  <button type="button" onClick={() => setShowSenha(p => !p)}
+                    style={{
+                      position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      color: 'var(--ft-text-muted)', padding: 0, display: 'flex',
+                    }}>
+                    {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
               {loginError && (
-                <div className="alert alert-danger py-2 small" role="alert">
-                  {loginError}
-                </div>
+                <div className="alert alert-danger py-2 small" role="alert">{loginError}</div>
               )}
-              <button
-                type="submit"
-                className="btn btn-primary w-100 py-2 fw-semibold"
-                disabled={loginLoading}
-              >
-                {loginLoading ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" />
-                    Entrando...
-                  </>
-                ) : (
-                  'Entrar'
-                )}
+              <button type="submit" className="btn btn-primary w-100 py-2 fw-semibold"
+                disabled={loginLoading} style={{ marginTop: '0.5rem' }}>
+                {loginLoading
+                  ? <><span className="spinner-border spinner-border-sm me-2" />Entrando...</>
+                  : 'Entrar na conta'}
               </button>
             </form>
           )}
@@ -171,153 +165,93 @@ const LoginPage = () => {
           {/* ── Cadastro ── */}
           {tab === 'cadastro' && (
             <form onSubmit={handleRegister}>
-              <p className="text-muted small fw-semibold mb-3 text-uppercase">
-                Dados do usuário
+              <p style={{
+                fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em',
+                textTransform: 'uppercase', color: 'var(--ft-text-muted)', marginBottom: '0.75rem',
+              }}>
+                Dados pessoais
               </p>
-              <div className="row g-3">
-                <div className="col-12">
-                  <label className="form-label fw-semibold small">Nome completo</label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="nmCompleto"
-                    value={reg.nmCompleto}
-                    onChange={handleRegChange}
-                    placeholder="João Silva"
-                    required
-                  />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <label className="form-label">Nome completo</label>
+                  <input className="form-control" type="text" name="nmCompleto"
+                    value={reg.nmCompleto} onChange={handleRegChange} placeholder="João Silva" required />
                 </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold small">CPF (só números)</label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="nmCpfUsuario"
-                    value={reg.nmCpfUsuario}
-                    onChange={handleRegChange}
-                    maxLength={11}
-                    pattern="[0-9]*"
-                    inputMode="numeric"
-                    placeholder="00000000000"
-                    required
-                  />
+                <div>
+                  <label className="form-label">CPF (só números)</label>
+                  <input className="form-control" type="text" name="nmCpfUsuario"
+                    value={reg.nmCpfUsuario} onChange={handleRegChange}
+                    maxLength={11} pattern="[0-9]*" inputMode="numeric"
+                    placeholder="00000000000" required />
                 </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold small">Data de nascimento</label>
-                  <input
-                    className="form-control"
-                    type="date"
-                    name="dtNascimento"
-                    value={reg.dtNascimento}
-                    onChange={handleRegChange}
-                    required
-                  />
+                <div>
+                  <label className="form-label">Data de nascimento</label>
+                  <input className="form-control" type="date" name="dtNascimento"
+                    value={reg.dtNascimento} onChange={handleRegChange} required />
                 </div>
-                <div className="col-12">
-                  <label className="form-label fw-semibold small">E-mail</label>
-                  <input
-                    className="form-control"
-                    type="email"
-                    name="dsEmail"
-                    value={reg.dsEmail}
-                    onChange={handleRegChange}
-                    placeholder="seu@email.com"
-                    autoComplete="email"
-                    required
-                  />
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <label className="form-label">E-mail</label>
+                  <input className="form-control" type="email" name="dsEmail"
+                    value={reg.dsEmail} onChange={handleRegChange}
+                    placeholder="seu@email.com" autoComplete="email" required />
                 </div>
-                <div className="col-12">
-                  <label className="form-label fw-semibold small">Senha</label>
-                  <input
-                    className="form-control"
-                    type="password"
-                    name="dsSenha"
-                    value={reg.dsSenha}
-                    onChange={handleRegChange}
-                    placeholder="Crie uma senha segura"
-                    autoComplete="new-password"
-                    required
-                  />
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <label className="form-label">Senha</label>
+                  <input className="form-control" type="password" name="dsSenha"
+                    value={reg.dsSenha} onChange={handleRegChange}
+                    placeholder="Crie uma senha segura" autoComplete="new-password" required />
                 </div>
               </div>
 
-              <hr className="my-4" />
+              <hr style={{ borderColor: 'var(--ft-border)', margin: '1rem 0' }} />
 
-              <p className="text-muted small fw-semibold mb-3 text-uppercase">
-                Dados da conta bancária
+              <p style={{
+                fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em',
+                textTransform: 'uppercase', color: 'var(--ft-text-muted)', marginBottom: '0.75rem',
+              }}>
+                Dados bancários
               </p>
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold small">Número da conta</label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="numeroDaConta"
-                    value={reg.numeroDaConta}
-                    onChange={handleRegChange}
-                    placeholder="ex: 12345-6"
-                    required
-                  />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div>
+                  <label className="form-label">Número da conta</label>
+                  <input className="form-control" type="text" name="numeroDaConta"
+                    value={reg.numeroDaConta} onChange={handleRegChange}
+                    placeholder="ex: 12345-6" required />
                 </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold small">Agência</label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="agencia"
-                    value={reg.agencia}
-                    onChange={handleRegChange}
-                    placeholder="ex: 0001"
-                    required
-                  />
+                <div>
+                  <label className="form-label">Agência</label>
+                  <input className="form-control" type="text" name="agencia"
+                    value={reg.agencia} onChange={handleRegChange} placeholder="ex: 0001" required />
                 </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold small">Tipo de conta</label>
-                  <select
-                    className="form-select"
-                    name="tipo"
-                    value={reg.tipo}
-                    onChange={handleRegChange}
-                  >
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <label className="form-label">Tipo de conta</label>
+                  <select className="form-select" name="tipo" value={reg.tipo} onChange={handleRegChange}>
                     <option value="Corrente">Corrente</option>
                     <option value="Poupança">Poupança</option>
                   </select>
                 </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold small">Saldo inicial (R$)</label>
-                  <input
-                    className="form-control"
-                    type="number"
-                    name="saldoStr"
-                    value={reg.saldoStr}
-                    onChange={handleRegChange}
-                    placeholder="0,00"
-                    min="0"
-                    step="0.01"
-                    required
-                  />
-                </div>
+              </div>
+
+              {/* Nota informativa sobre saldo inicial */}
+              <div style={{
+                marginTop: '0.875rem', padding: '0.625rem 0.875rem',
+                background: 'var(--ft-blue-dim)', borderRadius: 'var(--ft-radius-sm)',
+                border: '1px solid rgba(59,130,246,0.2)',
+              }}>
+                <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--ft-blue)' }}>
+                  💡 Sua conta será criada com saldo R$ 0,00. Adicione receitas para movimentar seu saldo.
+                </p>
               </div>
 
               {regError && (
-                <div className="alert alert-danger mt-3 py-2 small" role="alert">
-                  {regError}
-                </div>
+                <div className="alert alert-danger mt-3 py-2 small" role="alert">{regError}</div>
               )}
 
-              <button
-                type="submit"
-                className="btn btn-primary w-100 py-2 fw-semibold mt-4"
-                disabled={regLoading}
-              >
-                {regLoading ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" />
-                    Criando conta...
-                  </>
-                ) : (
-                  'Criar conta'
-                )}
+              <button type="submit" className="btn btn-primary w-100 py-2 fw-semibold mt-3"
+                disabled={regLoading}>
+                {regLoading
+                  ? <><span className="spinner-border spinner-border-sm me-2" />Criando conta...</>
+                  : 'Criar conta'}
               </button>
             </form>
           )}

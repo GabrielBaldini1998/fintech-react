@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from 'react';
 import type { Usuario, Conta } from '@/types/finance';
 import { getUsuarios, createUsuario } from '@/services/usuarioService';
-import { getContas, createConta } from '@/services/contaService';
+import { getContas, createConta, updateConta } from '@/services/contaService';
 
 interface Session {
   usuario: Usuario;
@@ -17,7 +17,6 @@ export interface RegisterData {
   numeroDaConta: string;
   agencia: string;
   tipo: string;
-  saldo: number;
 }
 
 interface AuthContextValue {
@@ -25,6 +24,10 @@ interface AuthContextValue {
   login: (email: string, senha: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
+  /** Ajusta o saldo em `delta` (positivo = crédito, negativo = débito) e persiste no backend. */
+  updateContaSaldo: (delta: number) => Promise<void>;
+  /** Re-busca a conta no backend e atualiza a sessão. */
+  refreshConta: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -43,10 +46,13 @@ function loadSession(): Session | null {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(loadSession);
 
-  const saveSession = (s: Session) => {
+  // Ref para acessar a sessão mais recente dentro de callbacks assíncronos
+  const sessionRef = useRef(session);
+  const persistSession = useCallback((s: Session) => {
+    sessionRef.current = s;
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(s));
     setSession(s);
-  };
+  }, []);
 
   const login = useCallback(async (email: string, senha: string) => {
     const usuarios = await getUsuarios();
@@ -57,8 +63,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const conta = contas.find(c => c.idUsuario === usuario.idUsuario);
     if (!conta) throw new Error('Nenhuma conta bancária encontrada para este usuário.');
 
-    saveSession({ usuario, conta });
-  }, []);
+    persistSession({ usuario, conta });
+  }, [persistSession]);
 
   const register = useCallback(async (data: RegisterData) => {
     await createUsuario({
@@ -69,17 +75,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       dsSenha: data.dsSenha,
     });
 
-    // POST retorna 201 sem body — busca o usuário recém-criado pelo e-mail
     const usuarios = await getUsuarios();
     const usuario = usuarios.find(u => u.dsEmail === data.dsEmail);
     if (!usuario) throw new Error('Erro ao localizar o usuário recém-criado.');
 
+    // Saldo inicial sempre R$ 0,00
     await createConta({
       numeroDaConta: data.numeroDaConta,
       titular: data.nmCompleto,
       agencia: data.agencia,
       tipo: data.tipo,
-      saldo: data.saldo,
+      saldo: 0,
       idUsuario: usuario.idUsuario,
     });
 
@@ -87,16 +93,49 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const conta = contas.find(c => c.numeroDaConta === data.numeroDaConta);
     if (!conta) throw new Error('Erro ao localizar a conta recém-criada.');
 
-    saveSession({ usuario, conta });
-  }, []);
+    persistSession({ usuario, conta });
+  }, [persistSession]);
 
   const logout = useCallback(() => {
+    sessionRef.current = null;
     sessionStorage.removeItem(SESSION_KEY);
     setSession(null);
   }, []);
 
+  const updateContaSaldo = useCallback(async (delta: number) => {
+    const current = sessionRef.current;
+    if (!current) return;
+
+    const novoSaldo = Math.max(0, current.conta.saldo + delta);
+    const contaAtualizada: Conta = { ...current.conta, saldo: novoSaldo };
+    const novaSession: Session = { ...current, conta: contaAtualizada };
+
+    // Atualiza localmente primeiro (otimista)
+    persistSession(novaSession);
+
+    // Persiste no backend (best-effort)
+    try {
+      await updateConta(contaAtualizada.numeroDaConta, contaAtualizada);
+    } catch {
+      // Se o backend falhar, o saldo local continua atualizado.
+      // O usuário verá o valor correto até o próximo login.
+    }
+  }, [persistSession]);
+
+  const refreshConta = useCallback(async () => {
+    const current = sessionRef.current;
+    if (!current) return;
+    try {
+      const contas = await getContas();
+      const conta = contas.find(c => c.numeroDaConta === current.conta.numeroDaConta);
+      if (conta) persistSession({ ...current, conta });
+    } catch {
+      // ignora — mantém dados locais
+    }
+  }, [persistSession]);
+
   return (
-    <AuthContext.Provider value={{ session, login, register, logout }}>
+    <AuthContext.Provider value={{ session, login, register, logout, updateContaSaldo, refreshConta }}>
       {children}
     </AuthContext.Provider>
   );
