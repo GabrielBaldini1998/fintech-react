@@ -32,7 +32,7 @@ const Dashboard = () => {
 
   useEffect(() => { load(); }, [load]);
 
-  const { saldoCalculado } = useSaldoCalculado(conta.saldo, receitas, despesas, investimentos);
+  const { saldoCalculado } = useSaldoCalculado(receitas, despesas, investimentos);
 
   /* KPIs do mês atual */
   const now = new Date();
