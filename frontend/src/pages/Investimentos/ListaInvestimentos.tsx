@@ -43,7 +43,7 @@ const ListaInvestimentos = () => {
 
   useEffect(() => { load(); }, [load]);
 
-  const { saldoCalculado } = useSaldoCalculado(conta.saldo, receitas, despesas, investimentos);
+  const { saldoCalculado } = useSaldoCalculado(receitas, despesas, investimentos);
 
   const handleDelete = async (id: number, nome: string) => {
     if (!window.confirm(`Excluir investimento "${nome}"?`)) return;
