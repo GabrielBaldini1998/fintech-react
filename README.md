@@ -1,254 +1,162 @@
-# Fintech React
+# Fintech — FIAP | Grupo EQ1S
 
-Dashboard financeiro pessoal construído com React 19 e TypeScript, integrado a uma API Spring Boot. Permite gerenciar despesas, receitas e investimentos por conta bancária.
+## Sobre o Projeto
 
----
-
-## Stack
-
-| Camada | Tecnologia |
-|---|---|
-| Framework | React 19 + TypeScript |
-| Bundler | Vite 7 |
-| Roteamento | React Router DOM v6 |
-| Estilo | Bootstrap 5 + Bootstrap Icons |
-| Backend | Spring Boot (API REST em `http://localhost:8080`) |
+Dashboard financeiro pessoal que permite gerenciar despesas, receitas e investimentos por conta bancária. Desenvolvido como projeto acadêmico na FIAP, o sistema integra uma API REST em Spring Boot com um SPA React, armazenando os dados no banco Oracle da instituição.
 
 ---
 
-## Estrutura de pastas
+## Tecnologias
 
-```
-src/
-├── contexts/          # Estado global (autenticação e menu)
-├── components/        # Componentes reutilizáveis de UI
-├── pages/             # Telas da aplicação
-├── services/          # Clientes HTTP para a API
-├── types/             # Interfaces TypeScript
-├── utils/             # Funções utilitárias
-├── routes.tsx         # Definição de rotas
-└── main.tsx           # Ponto de entrada
-```
+- **Backend:** Java 17, Spring Boot 3.4.5, Spring Data JPA, Oracle DB (ojdbc11)
+- **Frontend:** ReactJS 19, TypeScript, React Router DOM v6, Vite 7
 
 ---
 
-## Fluxo geral da aplicação
+## Estrutura do Monorepo
 
 ```
-main.tsx
-  └── AppRoutes (BrowserRouter)
-        └── AuthProvider   ← gerencia sessão em sessionStorage
-              ├── /login          → LoginPage (pública)
-              └── ProtectedLayout → verifica sessão; redireciona para /login se ausente
-                    ├── MenuProvider  ← controla sidebar aberta/fechada
-                    ├── Sidebar
-                    ├── Overlay
-                    ├── /dashboard      → Dashboard
-                    ├── /despesas       → Despesas
-                    ├── /receitas       → Receitas
-                    └── /investimentos  → Investments
+fintech-react/
+├── backend/     → API REST Spring Boot
+│   └── src/main/java/br/com/fiap/jdbc/
+│       ├── controller/   → 6 controllers (auth + 5 entidades)
+│       ├── service/      → 5 services com regras de negócio
+│       ├── repository/   → 5 repositories JPA
+│       ├── model/        → 5 entidades JPA
+│       ├── config/       → CORS, DataSeeder
+│       └── exception/    → GlobalExceptionHandler
+├── frontend/    → SPA React + TypeScript
+│   └── src/
+│       ├── pages/        → Login, Dashboard, Despesas, Receitas, Investimentos, Perfil, NotFound
+│       ├── components/   → Sidebar, Navbar, Footer, Charts, UI
+│       ├── services/     → apiClient, 5 services de entidade
+│       ├── contexts/     → AuthContext, MenuContext, ThemeContext
+│       └── types/        → interfaces TypeScript
+└── README.md
 ```
 
 ---
 
-## Autenticação (`AuthContext`)
-
-Mantém uma `session` com os dados do usuário e da conta, persistida em `sessionStorage`.
-
-### Login
-
-```
-1. Usuário informa e-mail + senha
-2. GET /api/usuarios → lista todos os usuários
-3. Encontra o usuário pelo e-mail e valida a senha
-4. GET /api/contas → lista todas as contas
-5. Encontra a conta vinculada ao idUsuario
-6. Salva { usuario, conta } em sessionStorage como "fintech_session"
-7. Redireciona para /dashboard
-```
-
-### Cadastro
-
-```
-1. Usuário preenche dados pessoais + dados da conta
-2. POST /api/usuarios → cria o usuário (retorna 201 sem body)
-3. GET /api/usuarios → busca o usuário recém-criado pelo e-mail
-4. POST /api/contas  → cria a conta vinculada ao idUsuario
-5. GET /api/contas   → confirma a criação da conta
-6. Salva a sessão e redireciona para /dashboard
-```
-
-### Logout
-
-Remove `fintech_session` do `sessionStorage` e redireciona para `/login`.
-
-### Guard de rotas
-
-`ProtectedLayout` lê `session` do contexto. Se `null`, redireciona imediatamente para `/login`.
-
----
-
-## Camada de serviços
-
-### `apiClient.ts`
-
-Wrapper sobre a Fetch API compartilhado por todos os serviços. Trata erro de rede, respostas não-OK e respostas sem body (201).
-
-```ts
-apiRequest<T>(url, options?) → Promise<T>
-jsonBody(method, body)       → RequestInit   // helper para POST/PUT JSON
-```
-
-### Serviços disponíveis
-
-| Arquivo | Endpoint base | Operações |
-|---|---|---|
-| `usuarioService.ts` | `/api/usuarios` | GET all, POST |
-| `contaService.ts` | `/api/contas` | GET all, POST |
-| `despesaService.ts` | `/api/despesas` | GET all, POST |
-| `receitaService.ts` | `/api/receitas` | GET all, POST, PUT, DELETE |
-| `investimentoService.ts` | `/api/investimentos` | GET all, POST, PUT, DELETE |
-
----
-
-## Páginas
-
-### `/login` — LoginPage
-
-Tela pública com duas abas: **Entrar** (e-mail + senha) e **Cadastrar nova conta** (dados pessoais + dados bancários). Exibe spinner durante o carregamento e erro inline em caso de falha.
-
-### `/dashboard` — Dashboard
-
-Lê os dados de `session` sem chamadas à API. Exibe boas-vindas, dados da conta (número, agência, tipo, saldo) e dados do titular.
-
-### `/despesas` — Despesas
-
-```
-1. Monta → GET /api/despesas → filtra por session.conta.numeroDaConta
-2. Exibe tabela: ID, tipo, valor (vermelho), data
-3. Formulário "Nova Despesa": tipo + valor + data
-4. Submit → POST /api/despesas → recarrega a lista
-```
-
-### `/receitas` — Receitas
-
-```
-1. Monta → GET /api/receitas → filtra por numeroDaConta
-2. Exibe tabela com ações editar / excluir
-3. Criar  → POST /api/receitas
-4. Editar → PUT /api/receitas/:id
-5. Excluir → confirm() → DELETE /api/receitas/:id
-```
-
-### `/investimentos` — Investments
-
-Mesma lógica de Receitas. Campos extras: banco/corretora, data de aplicação e data de vencimento. Exibe o total aplicado somado de todos os registros da conta.
-
----
-
-## Componentes
-
-### `Sidebar`
-
-Menu lateral com links para todas as rotas. Marca o item ativo pelo `pathname` atual. Botão "Sair" chama `logout()` e redireciona para `/login`.
-
-### `Navbar` (PageHeader)
-
-Cabeçalho de cada página. Recebe `title` como prop, exibe o nome do usuário logado e o botão de logout. Renderiza o `HamburgerButton` para toggle da sidebar em mobile.
-
-### `MenuContext` + `HamburgerButton` + `Overlay`
-
-Controlam a sidebar em telas menores. `isMenuOpen` aplica a classe CSS `toggled` no `document.body`, fazendo a sidebar deslizar via CSS.
-
-### `Footer`
-
-Rodapé simples renderizado em todas as rotas protegidas.
-
----
-
-## Tipos (`types/finance.ts`)
-
-```ts
-Usuario      { idUsuario, nmCompleto, dtNascimento, nmCpfUsuario, dsEmail, dsSenha }
-Conta        { numeroDaConta, titular, agencia, tipo, saldo, idUsuario }
-Despesa      { idDespesa, tpDespesa, vlDespesa, dtDespesa, numeroDaConta }
-Receita      { idReceita, dtReceita, vlRecebido, dsReceita, numeroDaConta }
-Investimento { idInvestimento, nmAplicacao, nmBancoCorretora, vlAplicacao,
-               dtAplicacao, dtVencimentoAplicacao, numeroDaConta }
-```
-
----
-
-## Utilitários (`utils/formatters.ts`)
-
-```ts
-formatCurrency(value)  // → "R$ 1.500,00"
-formatDate(iso)        // "2024-01-15" → "15/01/2024"
-```
-
----
-
-## Como executar
+## Como Executar
 
 ### Pré-requisitos
 
+- Java 17+
+- Maven 3.8+
 - Node.js 18+
-- API Spring Boot rodando em `http://localhost:8080`
+- Acesso à rede da FIAP (ou VPN)
 
-### Instalação
+### Backend
 
 ```bash
-npm install
+cd backend
+mvn clean install
+mvn spring-boot:run
 ```
 
-### Desenvolvimento
+API disponível em: `http://localhost:8080`
+
+### Frontend
 
 ```bash
+cd frontend
+npm install
 npm run dev
 ```
 
-Acesse `http://localhost:5173`.
-
-### Build de produção
-
-```bash
-npm run build
-npm run preview
-```
-
-### Lint
-
-```bash
-npm run lint
-```
+App disponível em: `http://localhost:5173`
 
 ---
 
-## Endpoints esperados no backend
+## Usuário de Teste
 
-| Método | Rota | Descrição |
-|---|---|---|
-| GET | `/api/usuarios` | Lista todos os usuários |
-| POST | `/api/usuarios` | Cria usuário (retorna 201) |
-| GET | `/api/contas` | Lista todas as contas |
-| POST | `/api/contas` | Cria conta |
-| GET | `/api/despesas` | Lista todas as despesas |
-| POST | `/api/despesas` | Cria despesa |
-| GET | `/api/receitas` | Lista todas as receitas |
-| POST | `/api/receitas` | Cria receita |
-| PUT | `/api/receitas/:id` | Atualiza receita |
-| DELETE | `/api/receitas/:id` | Remove receita |
-| GET | `/api/investimentos` | Lista todos os investimentos |
-| POST | `/api/investimentos` | Cria investimento |
-| PUT | `/api/investimentos/:id` | Atualiza investimento |
-| DELETE | `/api/investimentos/:id` | Remove investimento |
+| Campo | Valor              |
+|-------|--------------------|
+| Email | admin@fintech.com  |
+| Senha | 123456             |
 
-> **Nota:** O frontend filtra despesas, receitas e investimentos no cliente pelo `numeroDaConta` da sessão ativa. O backend retorna todos os registros sem filtro por usuário.
+> O usuário é criado automaticamente na primeira inicialização do backend (via `DataSeeder`), com saldo inicial de R$ 5.000,00 na conta `00001-0`.
 
 ---
 
-## Decisões de arquitetura
+## Endpoints da API
 
-- **Sessão em `sessionStorage`**: expira ao fechar o browser, sem necessidade de JWT ou refresh token.
-- **Filtro client-side por conta**: como a API não filtra por usuário, cada página busca todos os registros e filtra pelo `numeroDaConta` da sessão.
-- **Alias `@/`**: configurado no Vite apontando para `src/`, evitando imports com caminhos relativos longos.
+### Autenticação
+
+| Método | URL                  | Descrição                        |
+|--------|----------------------|----------------------------------|
+| POST   | /api/auth/login      | Login com email e senha          |
+
+### Usuários
+
+| Método | URL                  | Descrição                        |
+|--------|----------------------|----------------------------------|
+| GET    | /api/usuarios        | Listar todos os usuários         |
+| GET    | /api/usuarios/{id}   | Buscar usuário por ID            |
+| POST   | /api/usuarios        | Criar novo usuário               |
+| PUT    | /api/usuarios/{id}   | Atualizar usuário                |
+| DELETE | /api/usuarios/{id}   | Excluir usuário                  |
+
+### Contas
+
+| Método | URL                          | Descrição                        |
+|--------|------------------------------|----------------------------------|
+| GET    | /api/contas                  | Listar todas as contas           |
+| GET    | /api/contas/{numeroDaConta}  | Buscar conta por número          |
+| POST   | /api/contas                  | Criar nova conta                 |
+| PUT    | /api/contas/{numeroDaConta}  | Atualizar conta                  |
+| DELETE | /api/contas/{numeroDaConta}  | Excluir conta                    |
+
+### Despesas
+
+| Método | URL                  | Descrição                        |
+|--------|----------------------|----------------------------------|
+| GET    | /api/despesas        | Listar todas as despesas         |
+| GET    | /api/despesas/{id}   | Buscar despesa por ID            |
+| POST   | /api/despesas        | Criar nova despesa               |
+| PUT    | /api/despesas/{id}   | Atualizar despesa                |
+| DELETE | /api/despesas/{id}   | Excluir despesa                  |
+
+### Receitas
+
+| Método | URL                  | Descrição                        |
+|--------|----------------------|----------------------------------|
+| GET    | /api/receitas        | Listar todas as receitas         |
+| GET    | /api/receitas/{id}   | Buscar receita por ID            |
+| POST   | /api/receitas        | Criar nova receita               |
+| PUT    | /api/receitas/{id}   | Atualizar receita                |
+| DELETE | /api/receitas/{id}   | Excluir receita                  |
+
+### Investimentos
+
+| Método | URL                      | Descrição                        |
+|--------|--------------------------|----------------------------------|
+| GET    | /api/investimentos       | Listar todos os investimentos    |
+| GET    | /api/investimentos/{id}  | Buscar investimento por ID       |
+| POST   | /api/investimentos       | Criar novo investimento          |
+| PUT    | /api/investimentos/{id}  | Atualizar investimento           |
+| DELETE | /api/investimentos/{id}  | Excluir investimento             |
+
+---
+
+## Entidades
+
+### Usuario
+Campos: `idUsuario`, `nmCompleto`, `dtNascimento`, `nmCpfUsuario` (único), `dsEmail`, `dsSenha`
+Tabela Oracle: `T_FTC_USUARIO` | Sequence: `SEQ_USUARIO`
+
+### Conta
+Campos: `numeroDaConta` (PK String), `titular`, `agencia`, `tipo`, `saldo`, `idUsuario` (FK)
+Tabela Oracle: `T_FTC_CONTA`
+
+### Despesa
+Campos: `idDespesa`, `tpDespesa`, `vlDespesa`, `dtDespesa`, `numeroDaConta` (FK)
+Tabela Oracle: `T_FTC_DESPESA` | Sequence: `SEQ_DESPESA`
+
+### Receita
+Campos: `idReceita`, `dtReceita`, `vlRecebido`, `dsReceita`, `numeroDaConta` (FK)
+Tabela Oracle: `T_FTC_RECEITA` | Sequence: `SEQ_RECEITA`
+
+### Investimento
+Campos: `idInvestimento`, `nmAplicacao`, `nmBancoCorretora`, `vlAplicacao`, `dtAplicacao`, `dtVencimentoAplicacao`, `numeroDaConta` (FK)
+Tabela Oracle: `T_FTC_INVESTIMENTO` | Sequence: `SEQ_INVESTIMENTO`

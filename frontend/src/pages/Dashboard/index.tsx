@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Eye, EyeOff, TrendingUp, TrendingDown, DollarSign, BarChart3, User } from 'lucide-react';
+import { Eye, EyeOff, TrendingUp, TrendingDown, BarChart3, User } from 'lucide-react';
 import PageHeader from '@/components/Navbar';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatCurrency, formatDate } from '@/utils/formatters';
@@ -11,6 +11,7 @@ import { getDespesas } from '@/services/despesaService';
 import { getReceitas } from '@/services/receitaService';
 import { getInvestimentos } from '@/services/investimentoService';
 import { startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
+import { useSaldoCalculado } from '@/hooks/useSaldoCalculado';
 
 const Dashboard = () => {
   const { session } = useAuth();
@@ -30,6 +31,8 @@ const Dashboard = () => {
   }, [numeroDaConta]);
 
   useEffect(() => { load(); }, [load]);
+
+  const { saldoCalculado } = useSaldoCalculado(conta.saldo, receitas, despesas, investimentos);
 
   /* KPIs do mês atual */
   const now = new Date();
@@ -91,7 +94,7 @@ const Dashboard = () => {
                     margin: 0, fontSize: '2.25rem', fontWeight: 800, color: '#fff',
                     fontVariantNumeric: 'tabular-nums',
                   }}>
-                    {balanceHidden ? '•••••••' : formatCurrency(conta.saldo)}
+                    {balanceHidden ? '•••••••' : formatCurrency(saldoCalculado)}
                   </h2>
                   <button
                     onClick={() => setBalanceHidden(p => !p)}
@@ -152,10 +155,6 @@ const Dashboard = () => {
           <StatCard
             label="Despesas este mês" value={formatCurrency(despesasMes)}
             icon={<TrendingDown size={18} />} color="red"
-          />
-          <StatCard
-            label="Saldo líquido" value={formatCurrency(saldoLiquido)}
-            icon={<DollarSign size={18} />} color={saldoLiquido >= 0 ? 'green' : 'red'}
           />
           <StatCard
             label="Total investido" value={formatCurrency(totalInvestido)}

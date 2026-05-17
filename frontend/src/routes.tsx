@@ -7,10 +7,15 @@ import Overlay from '@/components/Sidebar/Overlay';
 import Footer from '@/components/Footer';
 import LoginPage from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
-import Despesas from '@/pages/Despesas';
-import Receitas from '@/pages/Receitas';
-import Investments from '@/pages/Investments';
 import Perfil from '@/pages/Perfil';
+import NotFound from '@/pages/NotFound';
+
+import ListaDespesas from '@/pages/Despesas/ListaDespesas';
+import FormDespesa from '@/pages/Despesas/FormDespesa';
+import ListaReceitas from '@/pages/Receitas/ListaReceitas';
+import FormReceita from '@/pages/Receitas/FormReceita';
+import ListaInvestimentos from '@/pages/Investimentos/ListaInvestimentos';
+import FormInvestimento from '@/pages/Investimentos/FormInvestimento';
 
 const ProtectedLayout = () => {
   const { session } = useAuth();
@@ -43,12 +48,22 @@ const AppRoutes = () => (
         <Route path="/login" element={<LoginPage />} />
         <Route element={<ProtectedLayout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard"      element={<Dashboard />} />
-          <Route path="/despesas"       element={<Despesas />} />
-          <Route path="/receitas"       element={<Receitas />} />
-          <Route path="/investimentos"  element={<Investments />} />
-          <Route path="/perfil"         element={<Perfil />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+
+          <Route path="/despesas" element={<ListaDespesas />} />
+          <Route path="/despesas/novo" element={<FormDespesa />} />
+          <Route path="/despesas/:id" element={<FormDespesa />} />
+
+          <Route path="/receitas" element={<ListaReceitas />} />
+          <Route path="/receitas/novo" element={<FormReceita />} />
+          <Route path="/receitas/:id" element={<FormReceita />} />
+
+          <Route path="/investimentos" element={<ListaInvestimentos />} />
+          <Route path="/investimentos/novo" element={<FormInvestimento />} />
+          <Route path="/investimentos/:id" element={<FormInvestimento />} />
+
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </AuthProvider>
