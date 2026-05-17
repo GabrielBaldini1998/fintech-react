@@ -139,6 +139,15 @@ App disponível em: `http://localhost:5173`
 
 ---
 
+## Changelog
+
+### 2026-05-17
+
+- **refactor:** reorganização do monorepo em `backend/` e `frontend/`, adicionado `vite-env.d.ts` para tipagem correta das variáveis de ambiente Vite no TypeScript.
+- **fix:** corrigido cálculo do saldo disponível no Dashboard — o campo `conta.saldo` (saldo inicial de abertura) estava sendo indevidamente somado às movimentações em `useSaldoCalculado`, inflando o valor exibido. O saldo agora é calculado exclusivamente como `receitas − despesas − investimentos`.
+
+---
+
 ## Entidades
 
 ### Usuario
