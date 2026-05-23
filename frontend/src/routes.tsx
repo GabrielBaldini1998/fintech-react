@@ -10,12 +10,10 @@ import Dashboard from '@/pages/Dashboard';
 import Perfil from '@/pages/Perfil';
 import NotFound from '@/pages/NotFound';
 
-import ListaDespesas from '@/pages/Despesas/ListaDespesas';
-import FormDespesa from '@/pages/Despesas/FormDespesa';
-import ListaReceitas from '@/pages/Receitas/ListaReceitas';
-import FormReceita from '@/pages/Receitas/FormReceita';
-import ListaInvestimentos from '@/pages/Investimentos/ListaInvestimentos';
-import FormInvestimento from '@/pages/Investimentos/FormInvestimento';
+import ListaTransacoes from '@/pages/Transacoes/ListaTransacoes';
+import FormTransacao from '@/pages/Transacoes/FormTransacao';
+import ListaCofrinhos from '@/pages/Cofrinhos/ListaCofrinhos';
+import FormCofrinho from '@/pages/Cofrinhos/FormCofrinho';
 
 const ProtectedLayout = () => {
   const { session } = useAuth();
@@ -50,17 +48,13 @@ const AppRoutes = () => (
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
 
-          <Route path="/despesas" element={<ListaDespesas />} />
-          <Route path="/despesas/novo" element={<FormDespesa />} />
-          <Route path="/despesas/:id" element={<FormDespesa />} />
+          <Route path="/transacoes" element={<ListaTransacoes />} />
+          <Route path="/transacoes/nova" element={<FormTransacao />} />
+          <Route path="/transacoes/:id" element={<FormTransacao />} />
 
-          <Route path="/receitas" element={<ListaReceitas />} />
-          <Route path="/receitas/novo" element={<FormReceita />} />
-          <Route path="/receitas/:id" element={<FormReceita />} />
-
-          <Route path="/investimentos" element={<ListaInvestimentos />} />
-          <Route path="/investimentos/novo" element={<FormInvestimento />} />
-          <Route path="/investimentos/:id" element={<FormInvestimento />} />
+          <Route path="/cofrinhos" element={<ListaCofrinhos />} />
+          <Route path="/cofrinhos/novo" element={<FormCofrinho />} />
+          <Route path="/cofrinhos/:id" element={<FormCofrinho />} />
 
           <Route path="/perfil" element={<Perfil />} />
           <Route path="*" element={<NotFound />} />

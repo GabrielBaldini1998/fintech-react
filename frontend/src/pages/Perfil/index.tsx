@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react';
-import { Camera, Lock, CreditCard, Settings, User, Eye, EyeOff, CheckCircle, Sun, Moon } from 'lucide-react';
+import { Camera, Lock, Settings, User, Eye, EyeOff, CheckCircle, Sun, Moon, FileText } from 'lucide-react';
 import PageHeader from '@/components/Navbar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import SectionCard from '@/components/ui/SectionCard';
 
-const AVATAR_KEY = 'fintech_avatar';
+const AVATAR_KEY = 'fincheck_avatar';
 
 function getStoredAvatar(): string | null {
   try { return localStorage.getItem(AVATAR_KEY); } catch { return null; }
@@ -21,18 +21,18 @@ function getPasswordStrength(pwd: string): { score: number; label: string; color
   if (/[0-9]/.test(pwd))        score++;
   if (/[^A-Za-z0-9]/.test(pwd)) score++;
   const levels = [
-    { label: '',       color: 'transparent' },
-    { label: 'Fraca',  color: '#EF4444' },
+    { label: '',         color: 'transparent' },
+    { label: 'Fraca',    color: '#EF4444' },
     { label: 'Razoável', color: '#F59E0B' },
-    { label: 'Boa',    color: '#3B82F6' },
-    { label: 'Forte',  color: '#10B981' },
+    { label: 'Boa',      color: '#3B82F6' },
+    { label: 'Forte',    color: '#22C55E' },
   ];
   return { score, ...levels[score] };
 }
 
 const Perfil = () => {
   const { session } = useAuth();
-  const { usuario, conta } = session!;
+  const { usuario } = session!;
   const { isDark, toggleTheme } = useTheme();
 
   /* Avatar */
@@ -76,18 +76,9 @@ const Perfil = () => {
   const handleSavePwd = (e: React.FormEvent) => {
     e.preventDefault();
     setPwdError(null);
-    if (pwdForm.atual !== usuario.dsSenha) {
-      setPwdError('Senha atual incorreta.');
-      return;
-    }
-    if (pwdForm.nova !== pwdForm.confirmar) {
-      setPwdError('As senhas não coincidem.');
-      return;
-    }
-    if (pwdForm.nova.length < 6) {
-      setPwdError('A nova senha deve ter pelo menos 6 caracteres.');
-      return;
-    }
+    if (pwdForm.atual !== usuario.dsSenha) { setPwdError('Senha atual incorreta.'); return; }
+    if (pwdForm.nova !== pwdForm.confirmar) { setPwdError('As senhas não coincidem.'); return; }
+    if (pwdForm.nova.length < 6) { setPwdError('A nova senha deve ter pelo menos 6 caracteres.'); return; }
     setPwdForm({ atual: '', nova: '', confirmar: '' });
     setPwdSaved(true);
     setTimeout(() => setPwdSaved(false), 3000);
@@ -111,24 +102,20 @@ const Perfil = () => {
                 background: avatar ? 'transparent' : 'var(--ft-gradient-primary)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '1.75rem', fontWeight: 800, color: '#fff',
-                border: '3px solid rgba(124,58,237,0.4)',
+                border: '3px solid rgba(245,158,11,0.35)',
                 boxShadow: 'var(--ft-shadow-glow)',
               }}>
                 {avatar
                   ? <img src={avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   : initials}
               </div>
-              <button
-                onClick={() => fileRef.current?.click()}
-                style={{
-                  position: 'absolute', bottom: 0, right: 0,
-                  width: 28, height: 28, borderRadius: '50%',
-                  background: 'var(--ft-gradient-primary)', border: '2px solid var(--ft-bg-page)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer', color: '#fff',
-                }}
-                title="Alterar foto"
-              >
+              <button onClick={() => fileRef.current?.click()} style={{
+                position: 'absolute', bottom: 0, right: 0,
+                width: 28, height: 28, borderRadius: '50%',
+                background: 'var(--ft-gradient-primary)', border: '2px solid var(--ft-bg-page)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', color: '#fff',
+              }} title="Alterar foto">
                 <Camera size={13} />
               </button>
               <input ref={fileRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: 'none' }} />
@@ -144,9 +131,9 @@ const Perfil = () => {
               <span style={{
                 display: 'inline-block', marginTop: '0.5rem', fontSize: '0.72rem', fontWeight: 600,
                 padding: '2px 10px', borderRadius: 'var(--ft-radius-full)',
-                background: 'var(--ft-purple-dim)', color: 'var(--ft-purple-light)',
+                background: 'var(--ft-amber-dim)', color: 'var(--ft-amber)',
               }}>
-                {conta.tipo}
+                {usuario.tpTipo ?? 'CPF'}
               </span>
             </div>
           </div>
@@ -156,18 +143,15 @@ const Perfil = () => {
         <SectionCard>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <User size={16} style={{ color: 'var(--ft-purple-light)' }} />
+              <User size={16} style={{ color: 'var(--ft-amber)' }} />
               <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700 }}>Dados Pessoais</h4>
             </div>
             {!editingInfo && !infoSaved && (
-              <button
-                onClick={() => setEditingInfo(true)}
-                style={{
-                  background: 'var(--ft-purple-dim)', border: 'none', borderRadius: 'var(--ft-radius-sm)',
-                  color: 'var(--ft-purple-light)', fontSize: '0.8rem', fontWeight: 600,
-                  padding: '0.375rem 0.875rem', cursor: 'pointer',
-                }}
-              >
+              <button onClick={() => setEditingInfo(true)} style={{
+                background: 'var(--ft-amber-dim)', border: 'none', borderRadius: 'var(--ft-radius-sm)',
+                color: 'var(--ft-amber)', fontSize: '0.8rem', fontWeight: 600,
+                padding: '0.375rem 0.875rem', cursor: 'pointer',
+              }}>
                 Editar
               </button>
             )}
@@ -191,17 +175,19 @@ const Perfil = () => {
                 </div>
               </div>
               <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
-                <button type="submit" className="btn btn-primary px-4" style={{ fontSize: '0.875rem' }}>Salvar</button>
+                <button type="submit" className="btn btn-primary px-4" style={{ fontSize: '0.875rem', color: '#000' }}>Salvar</button>
                 <button type="button" className="btn btn-outline-secondary"
                   onClick={() => { setEditingInfo(false); setNome(usuario.nmCompleto); setEmail(usuario.dsEmail); }}
                   style={{ fontSize: '0.875rem' }}>Cancelar</button>
               </div>
             </form>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
               {[
                 { label: 'Nome completo', value: nome },
-                { label: 'E-mail', value: email },
+                { label: 'E-mail',        value: email },
+                { label: 'Tipo',          value: usuario.tpTipo ?? 'CPF' },
+                { label: 'Documento',     value: usuario.nmDocumento },
               ].map(item => (
                 <div key={item.label}>
                   <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--ft-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -217,7 +203,7 @@ const Perfil = () => {
         {/* ── Segurança ── */}
         <SectionCard>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
-            <Lock size={16} style={{ color: 'var(--ft-purple-light)' }} />
+            <Lock size={16} style={{ color: 'var(--ft-amber)' }} />
             <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700 }}>Segurança</h4>
           </div>
 
@@ -226,7 +212,7 @@ const Perfil = () => {
               {(['atual', 'nova', 'confirmar'] as const).map(field => (
                 <div key={field}>
                   <label className="form-label">
-                    {field === 'atual' ? 'Senha atual' : field === 'nova' ? 'Nova senha' : 'Confirmar senha'}
+                    {field === 'atual' ? 'Senha atual' : field === 'nova' ? 'Nova senha' : 'Confirmar'}
                   </label>
                   <div style={{ position: 'relative' }}>
                     <input
@@ -238,15 +224,11 @@ const Perfil = () => {
                       placeholder="••••••••"
                       style={{ paddingRight: '2.5rem' }}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPwd(p => ({ ...p, [field]: !p[field] }))}
-                      style={{
-                        position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-                        background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ft-text-muted)',
-                        padding: 0, display: 'flex',
-                      }}
-                    >
+                    <button type="button" onClick={() => setShowPwd(p => ({ ...p, [field]: !p[field] }))} style={{
+                      position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                      background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ft-text-muted)',
+                      padding: 0, display: 'flex',
+                    }}>
                       {showPwd[field] ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
                   </div>
@@ -254,7 +236,6 @@ const Perfil = () => {
               ))}
             </div>
 
-            {/* Força da senha */}
             {pwdForm.nova && (
               <div style={{ marginTop: '0.75rem' }}>
                 <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
@@ -272,20 +253,15 @@ const Perfil = () => {
               </div>
             )}
 
-            {pwdError && (
-              <div className="alert alert-danger mt-3 py-2 small" role="alert">{pwdError}</div>
-            )}
+            {pwdError && <div className="alert alert-danger mt-3 py-2 small" role="alert">{pwdError}</div>}
             {pwdSaved && (
-              <div style={{
-                marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.375rem',
-                fontSize: '0.85rem', color: 'var(--ft-green)',
-              }}>
-                <CheckCircle size={15} /> Senha atualizada com sucesso!
+              <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.85rem', color: 'var(--ft-green)' }}>
+                <CheckCircle size={15} /> Senha atualizada!
               </div>
             )}
 
             <div style={{ marginTop: '1rem' }}>
-              <button type="submit" className="btn btn-primary px-4" style={{ fontSize: '0.875rem' }}>
+              <button type="submit" className="btn btn-primary px-4" style={{ fontSize: '0.875rem', color: '#000' }}>
                 Alterar senha
               </button>
             </div>
@@ -295,15 +271,15 @@ const Perfil = () => {
         {/* ── Dados da Conta ── */}
         <SectionCard>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
-            <CreditCard size={16} style={{ color: 'var(--ft-blue)' }} />
+            <FileText size={16} style={{ color: 'var(--ft-blue)' }} />
             <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700 }}>Dados da Conta</h4>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
             {[
-              { label: 'Número da Conta', value: conta.numeroDaConta },
-              { label: 'Agência',         value: conta.agencia },
-              { label: 'Tipo',            value: conta.tipo },
-              { label: 'Titular',         value: conta.titular },
+              { label: 'Nome',      value: usuario.nmCompleto },
+              { label: 'Documento', value: `${usuario.tpTipo ?? 'CPF'}: ${usuario.nmDocumento}` },
+              { label: 'E-mail',    value: usuario.dsEmail },
+              { label: 'ID',        value: String(usuario.idUsuario) },
             ].map(item => (
               <div key={item.label} style={{
                 background: 'rgba(255,255,255,0.025)', borderRadius: 'var(--ft-radius-md)',
@@ -312,7 +288,7 @@ const Perfil = () => {
                 <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--ft-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   {item.label}
                 </p>
-                <p style={{ margin: '4px 0 0', fontWeight: 700, color: 'var(--ft-text)' }}>{item.value}</p>
+                <p style={{ margin: '4px 0 0', fontWeight: 700, color: 'var(--ft-text)', wordBreak: 'break-all' }}>{item.value}</p>
               </div>
             ))}
           </div>
@@ -325,7 +301,6 @@ const Perfil = () => {
             <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700 }}>Preferências</h4>
           </div>
 
-          {/* Toggle de tema */}
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '0.875rem 1rem',
@@ -351,25 +326,16 @@ const Perfil = () => {
               </div>
             </div>
 
-            {/* Toggle switch funcional */}
-            <button
-              onClick={toggleTheme}
-              style={{
-                width: 48, height: 26, borderRadius: 13, border: 'none',
-                background: isDark ? 'var(--ft-gradient-primary)' : 'rgba(0,0,0,0.15)',
-                display: 'flex', alignItems: 'center',
-                padding: '0 3px',
-                justifyContent: isDark ? 'flex-end' : 'flex-start',
-                cursor: 'pointer',
-                transition: 'all 250ms ease',
-                flexShrink: 0,
-              }}
-              title={isDark ? 'Mudar para Light mode' : 'Mudar para Dark mode'}
-            >
+            <button onClick={toggleTheme} style={{
+              width: 48, height: 26, borderRadius: 13, border: 'none',
+              background: isDark ? 'var(--ft-gradient-primary)' : 'rgba(0,0,0,0.15)',
+              display: 'flex', alignItems: 'center', padding: '0 3px',
+              justifyContent: isDark ? 'flex-end' : 'flex-start',
+              cursor: 'pointer', transition: 'all 250ms ease', flexShrink: 0,
+            }} title={isDark ? 'Mudar para Light mode' : 'Mudar para Dark mode'}>
               <div style={{
                 width: 20, height: 20, borderRadius: '50%', background: '#fff',
                 boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
-                transition: 'transform 250ms ease',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 {isDark

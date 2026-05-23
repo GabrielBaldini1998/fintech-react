@@ -1,22 +1,19 @@
-import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from 'react';
-import type { Usuario, Conta } from '@/types/finance';
-import { getUsuarios, createUsuario } from '@/services/usuarioService';
-import { getContas, createConta, updateConta } from '@/services/contaService';
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import type { Usuario } from '@/types/finance';
+import { apiRequest, jsonBody } from '@/services/apiClient';
+import { createUsuario } from '@/services/usuarioService';
 
 interface Session {
   usuario: Usuario;
-  conta: Conta;
 }
 
 export interface RegisterData {
   nmCompleto: string;
   dtNascimento: string;
-  nmCpfUsuario: string;
+  nmDocumento: string;
+  tpTipo: 'CPF' | 'CNPJ';
   dsEmail: string;
   dsSenha: string;
-  numeroDaConta: string;
-  agencia: string;
-  tipo: string;
 }
 
 interface AuthContextValue {
@@ -24,15 +21,12 @@ interface AuthContextValue {
   login: (email: string, senha: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
-  /** Ajusta o saldo em `delta` (positivo = crédito, negativo = débito) e persiste no backend. */
-  updateContaSaldo: (delta: number) => Promise<void>;
-  /** Re-busca a conta no backend e atualiza a sessão. */
-  refreshConta: () => Promise<void>;
+  updateUsuario: (u: Usuario) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const SESSION_KEY = 'fintech_session';
+const SESSION_KEY = 'fincheck_session';
 
 function loadSession(): Session | null {
   try {
@@ -46,96 +40,44 @@ function loadSession(): Session | null {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(loadSession);
 
-  // Ref para acessar a sessão mais recente dentro de callbacks assíncronos
-  const sessionRef = useRef(session);
   const persistSession = useCallback((s: Session) => {
-    sessionRef.current = s;
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(s));
     setSession(s);
   }, []);
 
   const login = useCallback(async (email: string, senha: string) => {
-    const usuarios = await getUsuarios();
-    const usuario = usuarios.find(u => u.dsEmail === email && u.dsSenha === senha);
-    if (!usuario) throw new Error('Usuário ou senha inválidos.');
-
-    const contas = await getContas();
-    const conta = contas.find(c => c.idUsuario === usuario.idUsuario);
-    if (!conta) throw new Error('Nenhuma conta bancária encontrada para este usuário.');
-
-    persistSession({ usuario, conta });
+    const usuario = await apiRequest<Usuario>(
+      'http://localhost:8080/api/auth/login',
+      jsonBody('POST', { email, senha })
+    );
+    persistSession({ usuario });
   }, [persistSession]);
 
   const register = useCallback(async (data: RegisterData) => {
-    await createUsuario({
+    const usuario = await createUsuario({
       nmCompleto: data.nmCompleto,
       dtNascimento: data.dtNascimento,
-      nmCpfUsuario: data.nmCpfUsuario,
+      nmDocumento: data.nmDocumento,
+      tpTipo: data.tpTipo,
       dsEmail: data.dsEmail,
       dsSenha: data.dsSenha,
     });
-
-    const usuarios = await getUsuarios();
-    const usuario = usuarios.find(u => u.dsEmail === data.dsEmail);
-    if (!usuario) throw new Error('Erro ao localizar o usuário recém-criado.');
-
-    // Saldo inicial sempre R$ 0,00
-    await createConta({
-      numeroDaConta: data.numeroDaConta,
-      titular: data.nmCompleto,
-      agencia: data.agencia,
-      tipo: data.tipo,
-      saldo: 0,
-      idUsuario: usuario.idUsuario,
-    });
-
-    const contas = await getContas();
-    const conta = contas.find(c => c.numeroDaConta === data.numeroDaConta);
-    if (!conta) throw new Error('Erro ao localizar a conta recém-criada.');
-
-    persistSession({ usuario, conta });
+    persistSession({ usuario });
   }, [persistSession]);
 
   const logout = useCallback(() => {
-    sessionRef.current = null;
     sessionStorage.removeItem(SESSION_KEY);
     setSession(null);
   }, []);
 
-  const updateContaSaldo = useCallback(async (delta: number) => {
-    const current = sessionRef.current;
+  const updateUsuario = useCallback((u: Usuario) => {
+    const current = session;
     if (!current) return;
-
-    const novoSaldo = Math.max(0, current.conta.saldo + delta);
-    const contaAtualizada: Conta = { ...current.conta, saldo: novoSaldo };
-    const novaSession: Session = { ...current, conta: contaAtualizada };
-
-    // Atualiza localmente primeiro (otimista)
-    persistSession(novaSession);
-
-    // Persiste no backend (best-effort)
-    try {
-      await updateConta(contaAtualizada.numeroDaConta, contaAtualizada);
-    } catch {
-      // Se o backend falhar, o saldo local continua atualizado.
-      // O usuário verá o valor correto até o próximo login.
-    }
-  }, [persistSession]);
-
-  const refreshConta = useCallback(async () => {
-    const current = sessionRef.current;
-    if (!current) return;
-    try {
-      const contas = await getContas();
-      const conta = contas.find(c => c.numeroDaConta === current.conta.numeroDaConta);
-      if (conta) persistSession({ ...current, conta });
-    } catch {
-      // ignora — mantém dados locais
-    }
-  }, [persistSession]);
+    persistSession({ ...current, usuario: u });
+  }, [session, persistSession]);
 
   return (
-    <AuthContext.Provider value={{ session, login, register, logout, updateContaSaldo, refreshConta }}>
+    <AuthContext.Provider value={{ session, login, register, logout, updateUsuario }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Eye, EyeOff } from 'lucide-react';
+import { Coins, Eye, EyeOff } from 'lucide-react';
 import { useAuth, type RegisterData } from '@/contexts/AuthContext';
 
 type Tab = 'login' | 'cadastro';
-type RegForm = RegisterData;
 
-const emptyReg: RegForm = {
-  nmCompleto: '', dtNascimento: '', nmCpfUsuario: '',
-  dsEmail: '', dsSenha: '', numeroDaConta: '', agencia: '',
-  tipo: 'Corrente',
+const emptyReg: RegisterData = {
+  nmCompleto: '', dtNascimento: '', nmDocumento: '',
+  tpTipo: 'CPF', dsEmail: '', dsSenha: '',
 };
 
 const LoginPage = () => {
@@ -37,7 +35,7 @@ const LoginPage = () => {
     }
   };
 
-  const [reg, setReg] = useState<RegForm>(emptyReg);
+  const [reg, setReg] = useState<RegisterData>(emptyReg);
   const [regError, setRegError] = useState<string | null>(null);
   const [regLoading, setRegLoading] = useState(false);
 
@@ -67,57 +65,53 @@ const LoginPage = () => {
     }}>
       <div style={{
         position: 'fixed', top: '20%', left: '10%', width: 400, height: 400,
-        background: 'radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%)',
         borderRadius: '50%', pointerEvents: 'none',
       }} />
       <div style={{
         position: 'fixed', bottom: '10%', right: '15%', width: 300, height: 300,
-        background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%)',
         borderRadius: '50%', pointerEvents: 'none',
       }} />
 
       <div style={{
-        width: '100%', maxWidth: 520, position: 'relative', zIndex: 1,
+        width: '100%', maxWidth: 500, position: 'relative', zIndex: 1,
         background: 'var(--ft-bg-card)', border: '1px solid var(--ft-border)',
         borderRadius: 'var(--ft-radius-xl)', overflow: 'hidden',
         boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
       }}>
         {/* Header */}
         <div style={{
-          background: 'linear-gradient(135deg, #3B1F8C 0%, #1a2b6b 100%)',
+          background: 'linear-gradient(135deg, #2C1F00 0%, #1A1200 100%)',
           padding: '2rem', textAlign: 'center',
-          borderBottom: '1px solid rgba(124,58,237,0.3)',
+          borderBottom: '1px solid rgba(245,158,11,0.2)',
         }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            width: 52, height: 52, background: 'rgba(255,255,255,0.1)',
+            width: 52, height: 52, background: 'rgba(245,158,11,0.15)',
             borderRadius: 'var(--ft-radius-md)', marginBottom: '0.875rem',
           }}>
-            <Zap size={24} color="#fff" />
+            <Coins size={24} color="#F59E0B" />
           </div>
-          <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#fff', letterSpacing: '0.05em' }}>
-            FINTECH
+          <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#fff', letterSpacing: '0.02em' }}>
+            FinCheck
           </h1>
-          <p style={{ margin: '4px 0 0', color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem' }}>
-            Seu banco digital
+          <p style={{ margin: '4px 0 0', color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>
+            Gestão financeira inteligente
           </p>
         </div>
 
         {/* Tabs */}
         <div style={{ display: 'flex', borderBottom: '1px solid var(--ft-border)' }}>
           {(['login', 'cadastro'] as Tab[]).map(t => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              style={{
-                flex: 1, padding: '0.875rem', border: 'none', cursor: 'pointer',
-                background: tab === t ? 'rgba(124,58,237,0.1)' : 'transparent',
-                color: tab === t ? 'var(--ft-purple-light)' : 'var(--ft-text-muted)',
-                fontWeight: tab === t ? 700 : 500, fontSize: '0.875rem',
-                borderBottom: tab === t ? '2px solid var(--ft-purple)' : '2px solid transparent',
-                transition: 'all var(--ft-transition)',
-              }}
-            >
+            <button key={t} onClick={() => setTab(t)} style={{
+              flex: 1, padding: '0.875rem', border: 'none', cursor: 'pointer',
+              background: tab === t ? 'rgba(245,158,11,0.08)' : 'transparent',
+              color: tab === t ? 'var(--ft-amber)' : 'var(--ft-text-muted)',
+              fontWeight: tab === t ? 700 : 500, fontSize: '0.875rem',
+              borderBottom: tab === t ? '2px solid var(--ft-amber)' : '2px solid transparent',
+              transition: 'all var(--ft-transition)',
+            }}>
               {t === 'login' ? 'Entrar' : 'Criar conta'}
             </button>
           ))}
@@ -140,12 +134,11 @@ const LoginPage = () => {
                     value={senha} onChange={e => setSenha(e.target.value)}
                     placeholder="••••••••" autoComplete="current-password" required
                     style={{ paddingRight: '2.75rem' }} />
-                  <button type="button" onClick={() => setShowSenha(p => !p)}
-                    style={{
-                      position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      color: 'var(--ft-text-muted)', padding: 0, display: 'flex',
-                    }}>
+                  <button type="button" onClick={() => setShowSenha(p => !p)} style={{
+                    position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'var(--ft-text-muted)', padding: 0, display: 'flex',
+                  }}>
                     {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -154,10 +147,10 @@ const LoginPage = () => {
                 <div className="alert alert-danger py-2 small" role="alert">{loginError}</div>
               )}
               <button type="submit" className="btn btn-primary w-100 py-2 fw-semibold"
-                disabled={loginLoading} style={{ marginTop: '0.5rem' }}>
+                disabled={loginLoading} style={{ marginTop: '0.5rem', color: '#000' }}>
                 {loginLoading
                   ? <><span className="spinner-border spinner-border-sm me-2" />Entrando...</>
-                  : 'Entrar na conta'}
+                  : 'Entrar'}
               </button>
             </form>
           )}
@@ -165,26 +158,31 @@ const LoginPage = () => {
           {/* ── Cadastro ── */}
           {tab === 'cadastro' && (
             <form onSubmit={handleRegister}>
-              <p style={{
-                fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em',
-                textTransform: 'uppercase', color: 'var(--ft-text-muted)', marginBottom: '0.75rem',
-              }}>
-                Dados pessoais
-              </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                 <div style={{ gridColumn: '1 / -1' }}>
                   <label className="form-label">Nome completo</label>
                   <input className="form-control" type="text" name="nmCompleto"
                     value={reg.nmCompleto} onChange={handleRegChange} placeholder="João Silva" required />
                 </div>
+
                 <div>
-                  <label className="form-label">CPF (só números)</label>
-                  <input className="form-control" type="text" name="nmCpfUsuario"
-                    value={reg.nmCpfUsuario} onChange={handleRegChange}
-                    maxLength={11} pattern="[0-9]*" inputMode="numeric"
-                    placeholder="00000000000" required />
+                  <label className="form-label">Tipo de documento</label>
+                  <select className="form-select" name="tpTipo" value={reg.tpTipo} onChange={handleRegChange}>
+                    <option value="CPF">CPF (Pessoa Física)</option>
+                    <option value="CNPJ">CNPJ (Pessoa Jurídica)</option>
+                  </select>
                 </div>
                 <div>
+                  <label className="form-label">{reg.tpTipo === 'CPF' ? 'CPF' : 'CNPJ'}</label>
+                  <input className="form-control" type="text" name="nmDocumento"
+                    value={reg.nmDocumento} onChange={handleRegChange}
+                    maxLength={reg.tpTipo === 'CPF' ? 11 : 14}
+                    inputMode="numeric"
+                    placeholder={reg.tpTipo === 'CPF' ? '00000000000' : '00000000000000'}
+                    required />
+                </div>
+
+                <div style={{ gridColumn: '1 / -1' }}>
                   <label className="form-label">Data de nascimento</label>
                   <input className="form-control" type="date" name="dtNascimento"
                     value={reg.dtNascimento} onChange={handleRegChange} required />
@@ -203,52 +201,12 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              <hr style={{ borderColor: 'var(--ft-border)', margin: '1rem 0' }} />
-
-              <p style={{
-                fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em',
-                textTransform: 'uppercase', color: 'var(--ft-text-muted)', marginBottom: '0.75rem',
-              }}>
-                Dados bancários
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                <div>
-                  <label className="form-label">Número da conta</label>
-                  <input className="form-control" type="text" name="numeroDaConta"
-                    value={reg.numeroDaConta} onChange={handleRegChange}
-                    placeholder="ex: 12345-6" required />
-                </div>
-                <div>
-                  <label className="form-label">Agência</label>
-                  <input className="form-control" type="text" name="agencia"
-                    value={reg.agencia} onChange={handleRegChange} placeholder="ex: 0001" required />
-                </div>
-                <div style={{ gridColumn: '1 / -1' }}>
-                  <label className="form-label">Tipo de conta</label>
-                  <select className="form-select" name="tipo" value={reg.tipo} onChange={handleRegChange}>
-                    <option value="Corrente">Corrente</option>
-                    <option value="Poupança">Poupança</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Nota informativa sobre saldo inicial */}
-              <div style={{
-                marginTop: '0.875rem', padding: '0.625rem 0.875rem',
-                background: 'var(--ft-blue-dim)', borderRadius: 'var(--ft-radius-sm)',
-                border: '1px solid rgba(59,130,246,0.2)',
-              }}>
-                <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--ft-blue)' }}>
-                  💡 Sua conta será criada com saldo R$ 0,00. Adicione receitas para movimentar seu saldo.
-                </p>
-              </div>
-
               {regError && (
-                <div className="alert alert-danger mt-3 py-2 small" role="alert">{regError}</div>
+                <div className="alert alert-danger mt-2 py-2 small" role="alert">{regError}</div>
               )}
 
-              <button type="submit" className="btn btn-primary w-100 py-2 fw-semibold mt-3"
-                disabled={regLoading}>
+              <button type="submit" className="btn btn-primary w-100 py-2 fw-semibold mt-2"
+                disabled={regLoading} style={{ color: '#000' }}>
                 {regLoading
                   ? <><span className="spinner-border spinner-border-sm me-2" />Criando conta...</>
                   : 'Criar conta'}

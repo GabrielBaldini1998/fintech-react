@@ -1,171 +1,170 @@
-# Fintech — FIAP | Grupo EQ1S
+# FinCheck — Gestão Financeira Pessoal e Empresarial
 
-## Sobre o Projeto
-
-Dashboard financeiro pessoal que permite gerenciar despesas, receitas e investimentos por conta bancária. Desenvolvido como projeto acadêmico na FIAP, o sistema integra uma API REST em Spring Boot com um SPA React, armazenando os dados no banco Oracle da instituição.
+Aplicação full-stack para controle financeiro com cofrinhos digitais, transações e indicadores de saúde financeira. Projeto acadêmico FIAP — Grupo EQ1S.
 
 ---
 
-## Tecnologias
+## Stack
 
-- **Backend:** Java 17, Spring Boot 3.4.5, Spring Data JPA, Oracle DB (ojdbc11)
-- **Frontend:** ReactJS 19, TypeScript, React Router DOM v6, Vite 7
+| Camada   | Tecnologia |
+|----------|-----------|
+| Backend  | Spring Boot 3.4.5 · Java 17 · Oracle DB (ojdbc11) |
+| Frontend | React 19 · TypeScript · Vite · React Router v6 |
+| Estilo   | Bootstrap 5.3 (CDN, dark mode) · CSS Variables |
+| Extras   | Recharts · lucide-react · date-fns |
 
 ---
 
-## Estrutura do Monorepo
+## Arquitetura
 
 ```
 fintech-react/
-├── backend/     → API REST Spring Boot
+├── backend/          Spring Boot REST API
 │   └── src/main/java/br/com/fiap/jdbc/
-│       ├── controller/   → 6 controllers (auth + 5 entidades)
-│       ├── service/      → 5 services com regras de negócio
-│       ├── repository/   → 5 repositories JPA
-│       ├── model/        → 5 entidades JPA
-│       ├── config/       → CORS, DataSeeder
-│       └── exception/    → GlobalExceptionHandler
-├── frontend/    → SPA React + TypeScript
-│   └── src/
-│       ├── pages/        → Login, Dashboard, Despesas, Receitas, Investimentos, Perfil, NotFound
-│       ├── components/   → Sidebar, Navbar, Footer, Charts, UI
-│       ├── services/     → apiClient, 5 services de entidade
-│       ├── contexts/     → AuthContext, MenuContext, ThemeContext
-│       └── types/        → interfaces TypeScript
-└── README.md
+│       ├── model/        → Usuario, Transacao, Cofrinho
+│       ├── repository/   → Spring Data JPA
+│       ├── service/      → Regras de negócio + WatsonStubService
+│       ├── controller/   → REST endpoints
+│       └── config/       → DataSeeder, SequenceInitializer, WebConfig
+└── frontend/         SPA React
+    └── src/
+        ├── contexts/     → AuthContext, MenuContext, ThemeContext
+        ├── pages/        → Dashboard, Transacoes, Cofrinhos, Perfil, Login
+        ├── components/   → CofrinhoCard, FarolSaude, DicasIA, StatCard, SectionCard
+        └── services/     → transacaoService, cofrinhoService, usuarioService
 ```
 
 ---
 
-## Como Executar
+## Entidades Oracle
+
+### `T_FTC_USUARIO`
+| Coluna           | Tipo          | Descrição                    |
+|------------------|---------------|------------------------------|
+| id_usuario       | NUMBER PK     | Sequence SEQ_USUARIO         |
+| nm_completo      | VARCHAR2(100) | Nome completo                |
+| dt_nascimento    | DATE          |                              |
+| nm_cpf_usuario   | VARCHAR2(14)  | CPF (11) ou CNPJ (14)        |
+| tp_tipo          | VARCHAR2(5)   | "CPF" ou "CNPJ"              |
+| ds_email         | VARCHAR2(100) | Único                        |
+| ds_senha         | VARCHAR2(100) |                              |
+
+### `T_FTC_TRANSACAO`
+| Coluna        | Tipo          | Descrição                        |
+|---------------|---------------|----------------------------------|
+| id_transacao  | NUMBER PK     | Sequence SEQ_TRANSACAO           |
+| tp_transacao  | VARCHAR2(10)  | "RECEITA" ou "DESPESA"           |
+| ds_transacao  | VARCHAR2(200) | Descrição                        |
+| vl_transacao  | NUMBER(15,2)  | Valor > 0                        |
+| dt_transacao  | DATE          |                                  |
+| categoria     | VARCHAR2(50)  | Ex: "Alimentação", "Salário"     |
+| id_usuario    | NUMBER FK     | → T_FTC_USUARIO                  |
+| id_cofrinho   | NUMBER FK     | → T_FTC_COFRINHO (nullable)      |
+
+### `T_FTC_COFRINHO`
+| Coluna       | Tipo          | Descrição                    |
+|--------------|---------------|------------------------------|
+| id_cofrinho  | NUMBER PK     | Sequence SEQ_COFRINHO        |
+| nm_cofrinho  | VARCHAR2(100) | Ex: "Viagem Europa"          |
+| ds_cofrinho  | VARCHAR2(200) | Descrição opcional           |
+| vl_meta      | NUMBER(15,2)  | Meta financeira              |
+| vl_atual     | NUMBER(15,2)  | Saldo atual no cofrinho      |
+| ds_icone     | VARCHAR2(50)  | Nome do ícone (string)       |
+| ds_cor       | VARCHAR2(20)  | Cor hex ex: "#F59E0B"        |
+| id_usuario   | NUMBER FK     | → T_FTC_USUARIO              |
+
+---
+
+## Endpoints REST
+
+### Autenticação
+| Método | URL               | Body                   |
+|--------|-------------------|------------------------|
+| POST   | `/api/auth/login` | `{ email, senha }`     |
+
+### Usuários — `/api/usuarios`
+| Método | URL                  |
+|--------|----------------------|
+| GET    | `/api/usuarios`      |
+| GET    | `/api/usuarios/{id}` |
+| POST   | `/api/usuarios`      |
+| PUT    | `/api/usuarios/{id}` |
+| DELETE | `/api/usuarios/{id}` |
+
+### Transações — `/api/transacoes`
+| Método | URL                                    |
+|--------|----------------------------------------|
+| GET    | `/api/transacoes`                      |
+| GET    | `/api/transacoes/{id}`                 |
+| GET    | `/api/transacoes/usuario/{idUsuario}`  |
+| POST   | `/api/transacoes`                      |
+| PUT    | `/api/transacoes/{id}`                 |
+| DELETE | `/api/transacoes/{id}`                 |
+
+### Cofrinhos — `/api/cofrinhos`
+| Método | URL                                   |
+|--------|---------------------------------------|
+| GET    | `/api/cofrinhos`                      |
+| GET    | `/api/cofrinhos/{id}`                 |
+| GET    | `/api/cofrinhos/usuario/{idUsuario}`  |
+| POST   | `/api/cofrinhos`                      |
+| PUT    | `/api/cofrinhos/{id}`                 |
+| DELETE | `/api/cofrinhos/{id}`                 |
+
+### IA (Stub Watson) — `/api/ia`
+| Método | URL              | Descrição                      |
+|--------|------------------|--------------------------------|
+| POST   | `/api/ia/dica`   | Retorna dica financeira (stub) |
+| GET    | `/api/ia/status` | Status da integração Watson    |
+
+---
+
+## Como rodar
 
 ### Pré-requisitos
-
 - Java 17+
-- Maven 3.8+
 - Node.js 18+
-- Acesso à rede da FIAP (ou VPN)
+- Acesso ao Oracle (oracle.fiap.com.br:1521:ORCL)
+
+### Primeira execução (banco zerado)
+
+1. Abra o SQL Developer (`~/Downloads/opt/sqldeveloper/sqldeveloper.sh`)
+2. Conecte em `rm567373` / senha configurada
+3. Execute `backend/DDL_ANTES_DO_PRIMEIRO_START.sql`
+4. Confirme `spring.jpa.hibernate.ddl-auto=create` no `application.properties`
+5. Suba o backend — Hibernate cria as tabelas automaticamente
+6. Após subida bem-sucedida, mude para `ddl-auto=update` e reinicie
 
 ### Backend
-
 ```bash
 cd backend
-mvn clean install
-mvn spring-boot:run
+./mvnw spring-boot:run
+# API em http://localhost:8080
 ```
 
-API disponível em: `http://localhost:8080`
-
 ### Frontend
-
 ```bash
 cd frontend
 npm install
 npm run dev
+# App em http://localhost:5173
 ```
 
-App disponível em: `http://localhost:5173`
-
----
-
-## Usuário de Teste
-
+### Login de teste (seed automático)
 | Campo | Valor              |
 |-------|--------------------|
-| Email | admin@fintech.com  |
+| Email | admin@fincheck.com |
 | Senha | 123456             |
 
-> O usuário é criado automaticamente na primeira inicialização do backend (via `DataSeeder`), com saldo inicial de R$ 5.000,00 na conta `00001-0`.
-
 ---
 
-## Endpoints da API
+## Funcionalidades
 
-### Autenticação
-
-| Método | URL                  | Descrição                        |
-|--------|----------------------|----------------------------------|
-| POST   | /api/auth/login      | Login com email e senha          |
-
-### Usuários
-
-| Método | URL                  | Descrição                        |
-|--------|----------------------|----------------------------------|
-| GET    | /api/usuarios        | Listar todos os usuários         |
-| GET    | /api/usuarios/{id}   | Buscar usuário por ID            |
-| POST   | /api/usuarios        | Criar novo usuário               |
-| PUT    | /api/usuarios/{id}   | Atualizar usuário                |
-| DELETE | /api/usuarios/{id}   | Excluir usuário                  |
-
-### Contas
-
-| Método | URL                          | Descrição                        |
-|--------|------------------------------|----------------------------------|
-| GET    | /api/contas                  | Listar todas as contas           |
-| GET    | /api/contas/{numeroDaConta}  | Buscar conta por número          |
-| POST   | /api/contas                  | Criar nova conta                 |
-| PUT    | /api/contas/{numeroDaConta}  | Atualizar conta                  |
-| DELETE | /api/contas/{numeroDaConta}  | Excluir conta                    |
-
-### Despesas
-
-| Método | URL                  | Descrição                        |
-|--------|----------------------|----------------------------------|
-| GET    | /api/despesas        | Listar todas as despesas         |
-| GET    | /api/despesas/{id}   | Buscar despesa por ID            |
-| POST   | /api/despesas        | Criar nova despesa               |
-| PUT    | /api/despesas/{id}   | Atualizar despesa                |
-| DELETE | /api/despesas/{id}   | Excluir despesa                  |
-
-### Receitas
-
-| Método | URL                  | Descrição                        |
-|--------|----------------------|----------------------------------|
-| GET    | /api/receitas        | Listar todas as receitas         |
-| GET    | /api/receitas/{id}   | Buscar receita por ID            |
-| POST   | /api/receitas        | Criar nova receita               |
-| PUT    | /api/receitas/{id}   | Atualizar receita                |
-| DELETE | /api/receitas/{id}   | Excluir receita                  |
-
-### Investimentos
-
-| Método | URL                      | Descrição                        |
-|--------|--------------------------|----------------------------------|
-| GET    | /api/investimentos       | Listar todos os investimentos    |
-| GET    | /api/investimentos/{id}  | Buscar investimento por ID       |
-| POST   | /api/investimentos       | Criar novo investimento          |
-| PUT    | /api/investimentos/{id}  | Atualizar investimento           |
-| DELETE | /api/investimentos/{id}  | Excluir investimento             |
-
----
-
-## Changelog
-
-### 2026-05-17
-
-- **refactor:** reorganização do monorepo em `backend/` e `frontend/`, adicionado `vite-env.d.ts` para tipagem correta das variáveis de ambiente Vite no TypeScript.
-- **fix:** corrigido cálculo do saldo disponível no Dashboard — o campo `conta.saldo` (saldo inicial de abertura) estava sendo indevidamente somado às movimentações em `useSaldoCalculado`, inflando o valor exibido. O saldo agora é calculado exclusivamente como `receitas − despesas − investimentos`.
-
----
-
-## Entidades
-
-### Usuario
-Campos: `idUsuario`, `nmCompleto`, `dtNascimento`, `nmCpfUsuario` (único), `dsEmail`, `dsSenha`
-Tabela Oracle: `T_FTC_USUARIO` | Sequence: `SEQ_USUARIO`
-
-### Conta
-Campos: `numeroDaConta` (PK String), `titular`, `agencia`, `tipo`, `saldo`, `idUsuario` (FK)
-Tabela Oracle: `T_FTC_CONTA`
-
-### Despesa
-Campos: `idDespesa`, `tpDespesa`, `vlDespesa`, `dtDespesa`, `numeroDaConta` (FK)
-Tabela Oracle: `T_FTC_DESPESA` | Sequence: `SEQ_DESPESA`
-
-### Receita
-Campos: `idReceita`, `dtReceita`, `vlRecebido`, `dsReceita`, `numeroDaConta` (FK)
-Tabela Oracle: `T_FTC_RECEITA` | Sequence: `SEQ_RECEITA`
-
-### Investimento
-Campos: `idInvestimento`, `nmAplicacao`, `nmBancoCorretora`, `vlAplicacao`, `dtAplicacao`, `dtVencimentoAplicacao`, `numeroDaConta` (FK)
-Tabela Oracle: `T_FTC_INVESTIMENTO` | Sequence: `SEQ_INVESTIMENTO`
+- Login e cadastro (CPF ou CNPJ)
+- Dashboard: saldo, KPIs mensais, grid de cofrinhos e faróis de saúde financeira
+- CRUD Transações (receitas e despesas) com filtro por tipo e categoria
+- CRUD Cofrinhos com progresso visual (anel SVG) e meta financeira
+- Perfil: avatar (localStorage), dados pessoais, troca de senha, toggle dark/light
+- Dark mode padrão + toggle para light mode
+- Componente DicasIA — placeholder para integração futura com IBM Watson
+- Endpoint `/api/ia/dica` preparado para webhook Node-RED

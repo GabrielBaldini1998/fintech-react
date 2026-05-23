@@ -7,19 +7,19 @@
 
 :root {
   /* ── Paleta Principal ── */
-  --ft-bg-page:        #0F0F13;
-  --ft-bg-card:        #1A1A2E;
-  --ft-bg-card-alt:    #16213E;
-  --ft-bg-input:       #0F0F1A;
-  --ft-border:         rgba(255, 255, 255, 0.06);
-  --ft-border-hover:   rgba(255, 255, 255, 0.12);
+  --ft-bg-page:        #0D0C09;
+  --ft-bg-card:        #1C1A12;
+  --ft-bg-card-alt:    #181509;
+  --ft-bg-input:       #0D0C09;
+  --ft-border:         rgba(255, 255, 255, 0.07);
+  --ft-border-hover:   rgba(255, 255, 255, 0.14);
 
   /* ── Cores de Destaque ── */
   --ft-purple:         #7C3AED;
   --ft-purple-light:   #8B5CF6;
   --ft-purple-dim:     rgba(124, 58, 237, 0.15);
-  --ft-green:          #10B981;
-  --ft-green-dim:      rgba(16, 185, 129, 0.15);
+  --ft-green:          #22C55E;
+  --ft-green-dim:      rgba(34, 197, 94, 0.15);
   --ft-red:            #EF4444;
   --ft-red-dim:        rgba(239, 68, 68, 0.15);
   --ft-blue:           #3B82F6;
@@ -27,9 +27,16 @@
   --ft-yellow:         #F59E0B;
   --ft-yellow-dim:     rgba(245, 158, 11, 0.15);
 
+  /* ── Âmbar (cor primária de marca) ── */
+  --ft-amber:          #F59E0B;
+  --ft-amber-light:    #FCD34D;
+  --ft-amber-dim:      rgba(245, 158, 11, 0.15);
+  --ft-forest:         #22C55E;
+  --ft-forest-dim:     rgba(34, 197, 94, 0.15);
+
   /* ── Gradientes ── */
-  --ft-gradient-primary:    linear-gradient(135deg, #7C3AED 0%, #3B82F6 100%);
-  --ft-gradient-green:      linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --ft-gradient-primary:    linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  --ft-gradient-green:      linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
   --ft-gradient-red:        linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   --ft-gradient-blue:       linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
 
@@ -43,7 +50,7 @@
   --ft-shadow-sm:   0 1px 3px rgba(0,0,0,0.4);
   --ft-shadow-md:   0 4px 16px rgba(0,0,0,0.35);
   --ft-shadow-lg:   0 8px 32px rgba(0,0,0,0.4);
-  --ft-shadow-glow: 0 0 20px rgba(124,58,237,0.25);
+  --ft-shadow-glow: 0 0 20px rgba(245,158,11,0.25);
 
   /* ── Raios de Borda ── */
   --ft-radius-sm:   8px;
@@ -71,12 +78,12 @@
   --bs-form-control-bg: var(--ft-bg-input);
   --bs-input-bg:       var(--ft-bg-input);
   --bs-input-border-color: rgba(255,255,255,0.1);
-  --bs-input-focus-border-color: var(--ft-purple);
+  --bs-input-focus-border-color: var(--ft-amber);
   --bs-table-bg:       transparent;
   --bs-table-hover-bg: rgba(255,255,255,0.04);
   --bs-table-striped-bg: rgba(255,255,255,0.02);
-  --bs-primary:        var(--ft-purple);
-  --bs-primary-rgb:    124, 58, 237;
+  --bs-primary:        var(--ft-amber);
+  --bs-primary-rgb:    245, 158, 11;
 }
 
 /* =====================================================
@@ -177,10 +184,10 @@ body {
   border: none !important;
   color: #fff !important;
   font-weight: 600;
-  box-shadow: 0 0 16px rgba(124,58,237,0.35);
+  box-shadow: 0 0 16px rgba(245,158,11,0.35);
   transition: all var(--ft-transition);
 }
-.btn-primary:hover { opacity: 0.9; box-shadow: 0 0 24px rgba(124,58,237,0.5); transform: translateY(-1px); }
+.btn-primary:hover { opacity: 0.9; box-shadow: 0 0 24px rgba(245,158,11,0.5); transform: translateY(-1px); }
 .btn-primary:active { transform: translateY(0); }
 .btn-primary:disabled { opacity: 0.55; }
 

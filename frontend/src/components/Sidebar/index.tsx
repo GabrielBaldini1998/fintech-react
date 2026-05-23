@@ -2,8 +2,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useMenu } from '@/contexts/MenuContext';
 import { useAuth } from '@/contexts/AuthContext';
 import {
-  LayoutDashboard, CreditCard, TrendingUp, BarChart3,
-  User, LogOut, Zap,
+  LayoutDashboard, ArrowLeftRight, PiggyBank,
+  User, LogOut, Coins,
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -14,11 +14,10 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { name: 'Dashboard',     icon: <LayoutDashboard size={18} />, path: '/dashboard' },
-  { name: 'Despesas',      icon: <CreditCard size={18} />,      path: '/despesas' },
-  { name: 'Receitas',      icon: <TrendingUp size={18} />,      path: '/receitas' },
-  { name: 'Investimentos', icon: <BarChart3 size={18} />,       path: '/investimentos' },
-  { name: 'Perfil',        icon: <User size={18} />,            path: '/perfil' },
+  { name: 'Dashboard',   icon: <LayoutDashboard size={18} />, path: '/dashboard' },
+  { name: 'Transações',  icon: <ArrowLeftRight size={18} />,  path: '/transacoes' },
+  { name: 'Cofrinhos',   icon: <PiggyBank size={18} />,       path: '/cofrinhos' },
+  { name: 'Perfil',      icon: <User size={18} />,            path: '/perfil' },
 ];
 
 const Sidebar = () => {
@@ -44,10 +43,10 @@ const Sidebar = () => {
     <div id="sidebar-wrapper">
       {/* Logo */}
       <div className="sidebar-logo">
-        <div className="sidebar-logo-icon"><Zap size={18} /></div>
+        <div className="sidebar-logo-icon"><Coins size={18} /></div>
         <div>
-          <span className="sidebar-logo-text">FINTECH</span>
-          <span className="sidebar-logo-sub">Banco Digital</span>
+          <span className="sidebar-logo-text">FinCheck</span>
+          <span className="sidebar-logo-sub">Gestão Financeira</span>
         </div>
       </div>
 
@@ -55,7 +54,7 @@ const Sidebar = () => {
       <nav className="sidebar-nav">
         <span className="sidebar-section-label">Menu</span>
         {MENU_ITEMS.map(item => {
-          const isActive = pathname === item.path;
+          const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
           return (
             <Link
               key={item.path}
@@ -87,7 +86,7 @@ const Sidebar = () => {
                 {session.usuario.nmCompleto.split(' ')[0]}
               </div>
               <div style={{ fontSize: '0.68rem', color: 'var(--ft-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {session.conta.tipo}
+                {session.usuario.tpTipo ?? 'CPF'}
               </div>
             </div>
           </div>
