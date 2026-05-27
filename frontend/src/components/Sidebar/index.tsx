@@ -3,7 +3,7 @@ import { useMenu } from '@/contexts/MenuContext';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, ArrowLeftRight, PiggyBank,
-  User, LogOut, Coins,
+  User, LogOut, Coins, Users,
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -17,6 +17,7 @@ const MENU_ITEMS: MenuItem[] = [
   { name: 'Dashboard',   icon: <LayoutDashboard size={18} />, path: '/dashboard' },
   { name: 'Transações',  icon: <ArrowLeftRight size={18} />,  path: '/transacoes' },
   { name: 'Cofrinhos',   icon: <PiggyBank size={18} />,       path: '/cofrinhos' },
+  { name: 'Usuários',    icon: <Users size={18} />,           path: '/usuarios' },
   { name: 'Perfil',      icon: <User size={18} />,            path: '/perfil' },
 ];
 

@@ -14,6 +14,8 @@ import ListaTransacoes from '@/pages/Transacoes/ListaTransacoes';
 import FormTransacao from '@/pages/Transacoes/FormTransacao';
 import ListaCofrinhos from '@/pages/Cofrinhos/ListaCofrinhos';
 import FormCofrinho from '@/pages/Cofrinhos/FormCofrinho';
+import ListaUsuarios from '@/pages/Usuarios/ListaUsuarios';
+import FormUsuario from '@/pages/Usuarios/FormUsuario';
 
 const ProtectedLayout = () => {
   const { session } = useAuth();
@@ -55,6 +57,10 @@ const AppRoutes = () => (
           <Route path="/cofrinhos" element={<ListaCofrinhos />} />
           <Route path="/cofrinhos/novo" element={<FormCofrinho />} />
           <Route path="/cofrinhos/:id" element={<FormCofrinho />} />
+
+          <Route path="/usuarios" element={<ListaUsuarios />} />
+          <Route path="/usuarios/novo" element={<FormUsuario />} />
+          <Route path="/usuarios/:id" element={<FormUsuario />} />
 
           <Route path="/perfil" element={<Perfil />} />
           <Route path="*" element={<NotFound />} />
