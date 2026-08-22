@@ -49,7 +49,7 @@ const FormUsuario = () => {
         nmDocumento:  u.nmDocumento,
         tpTipo:       u.tpTipo,
         dsEmail:      u.dsEmail,
-        dsSenha:      u.dsSenha,
+        dsSenha:      '',
       }))
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));

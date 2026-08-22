@@ -4,6 +4,7 @@ import PageHeader from '@/components/Navbar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import SectionCard from '@/components/ui/SectionCard';
+import { updateUsuario as updateUsuarioApi } from '@/services/usuarioService';
 
 const AVATAR_KEY = 'fincheck_avatar';
 
@@ -31,7 +32,7 @@ function getPasswordStrength(pwd: string): { score: number; label: string; color
 }
 
 const Perfil = () => {
-  const { session } = useAuth();
+  const { session, login, updateUsuario: refreshSession } = useAuth();
   const { usuario } = session!;
   const { isDark, toggleTheme } = useTheme();
 
@@ -69,19 +70,44 @@ const Perfil = () => {
   const [showPwd, setShowPwd] = useState({ atual: false, nova: false, confirmar: false });
   const [pwdError, setPwdError] = useState<string | null>(null);
   const [pwdSaved, setPwdSaved] = useState(false);
+  const [pwdSubmitting, setPwdSubmitting] = useState(false);
 
   const handlePwdChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setPwdForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSavePwd = (e: React.FormEvent) => {
+  const handleSavePwd = async (e: React.FormEvent) => {
     e.preventDefault();
     setPwdError(null);
-    if (pwdForm.atual !== usuario.dsSenha) { setPwdError('Senha atual incorreta.'); return; }
     if (pwdForm.nova !== pwdForm.confirmar) { setPwdError('As senhas não coincidem.'); return; }
     if (pwdForm.nova.length < 6) { setPwdError('A nova senha deve ter pelo menos 6 caracteres.'); return; }
-    setPwdForm({ atual: '', nova: '', confirmar: '' });
-    setPwdSaved(true);
-    setTimeout(() => setPwdSaved(false), 3000);
+
+    setPwdSubmitting(true);
+    try {
+      await login(usuario.dsEmail, pwdForm.atual);
+    } catch {
+      setPwdError('Senha atual incorreta.');
+      setPwdSubmitting(false);
+      return;
+    }
+
+    try {
+      const atualizado = await updateUsuarioApi(usuario.idUsuario, {
+        nmCompleto: usuario.nmCompleto,
+        dtNascimento: usuario.dtNascimento,
+        nmDocumento: usuario.nmDocumento,
+        tpTipo: usuario.tpTipo,
+        dsEmail: usuario.dsEmail,
+        dsSenha: pwdForm.nova,
+      });
+      refreshSession(atualizado);
+      setPwdForm({ atual: '', nova: '', confirmar: '' });
+      setPwdSaved(true);
+      setTimeout(() => setPwdSaved(false), 3000);
+    } catch {
+      setPwdError('Não foi possível atualizar a senha. Tente novamente.');
+    } finally {
+      setPwdSubmitting(false);
+    }
   };
 
   const strength = getPasswordStrength(pwdForm.nova);
@@ -261,8 +287,8 @@ const Perfil = () => {
             )}
 
             <div style={{ marginTop: '1rem' }}>
-              <button type="submit" className="btn btn-primary px-4" style={{ fontSize: '0.875rem', color: '#000' }}>
-                Alterar senha
+              <button type="submit" className="btn btn-primary px-4" style={{ fontSize: '0.875rem', color: '#000' }} disabled={pwdSubmitting}>
+                {pwdSubmitting ? 'Verificando…' : 'Alterar senha'}
               </button>
             </div>
           </form>

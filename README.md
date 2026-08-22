@@ -39,19 +39,24 @@ Antes de iniciar, certifique-se de ter instalado:
 
 ```
 fintech-react/
-├── backend/    → API REST Spring Boot (porta 8080)
 ├── frontend/   → SPA React + Vite (porta 5173)
 └── README.md
 ```
+
+O backend (API REST Spring Boot, porta 8080) vive em um repositório separado:
+[BackendFintech](https://github.com/GabrielBaldini1998/BackendFintech). O
+frontend apenas consome essa API via HTTP — nenhum código de backend fica
+neste repositório.
 
 ---
 
 ## 1. Subindo o Backend
 
-Abra um terminal na pasta `backend/` e execute:
+O backend fica no repositório [BackendFintech](https://github.com/GabrielBaldini1998/BackendFintech). Clone-o à parte e execute:
 
 ```bash
-cd backend
+git clone https://github.com/GabrielBaldini1998/BackendFintech.git
+cd BackendFintech
 mvn spring-boot:run
 ```
 
